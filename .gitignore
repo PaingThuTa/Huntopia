@@ -1,0 +1,52 @@
+# Built application files
+*.apk
+*.aar
+*.aab
+
+# Gradle
+.gradle/
+build/
+*/build/
+
+# Local configuration
+local.properties
+
+# Android Studio/IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Mac/Windows/Linux
+.DS_Store
+Thumbs.db
+
+# Keystore files
+*.jks
+*.keystore
+
+# Logs
+*.log
+
+# External native build
+.externalNativeBuild/
+.cxx/
+
+# Generated captures
+captures/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+# NDK
+obj/
+
+# Kotlin/Java
+*.class
+
+# Misc
+lint-results*.html
+lint-results*.xml
