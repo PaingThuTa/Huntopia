@@ -3,6 +3,9 @@
     <style name="Base.Theme.Huntopia" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="fontFamily">@font/lexend_deca_regular</item>
+        <item name="android:fontFamily">@font/lexend_deca_regular</item>
+
     </style>
 
     <style name="Theme.Huntopia" parent="Base.Theme.Huntopia" />

@@ -1,3 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Huntopia</string>
+    <string name="login_title">Welcome to Huntopia!</string>
+    <string name="username_hint">Username</string>
+    <string name="password_hint">Password</string>
+    <string name="lets_start">Lets Start</string>
+    <string name="forget_password">forget password</string>
+    <string name="logo_cd">Huntopia logo</string>
 </resources>
