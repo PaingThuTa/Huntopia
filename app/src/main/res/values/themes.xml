@@ -1,12 +1,15 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.Huntopia" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="fontFamily">@font/lexend_deca_regular</item>
         <item name="android:fontFamily">@font/lexend_deca_regular</item>
-
+        <item name="android:navigationBarColor">@color/orange_soft</item>
+        <item name="android:navigationBarDividerColor">@color/orange_soft</item>
     </style>
 
     <style name="Theme.Huntopia" parent="Base.Theme.Huntopia" />
+
+    <style name="ShapeAppearanceOverlay.Circular" parent="">
+        <item name="cornerSize">50%</item>
+    </style>
 </resources>
