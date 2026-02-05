@@ -10,24 +10,24 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class AchievementsFragment : Fragment() {
+class AchievementsUnlockFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_achievements, container, false)
+        return inflater.inflate(R.layout.fragment_achievements_unlock, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.rvAchievements)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.rvUnlock)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = AchievementsAdapter(buildDummyItems()) { item ->
+        recyclerView.adapter = AchievementsUnlockAdapter(buildDummyItems()) { item ->
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AchievementDetailsFragment.newInstance(item.title, true))
+                .replace(R.id.fragment_container, AchievementDetailsFragment.newInstance(item.title, false))
                 .addToBackStack(null)
                 .commit()
         }
@@ -36,15 +36,12 @@ class AchievementsFragment : Fragment() {
         setupBottomNav(view)
     }
 
-    private fun buildDummyItems(): List<AchievementItem> {
-        val date = "30/1/2026"
-        val time = "10:00 AM"
+    private fun buildDummyItems(): List<UnlockAchievementItem> {
         return listOf(
-            AchievementItem("Sala Thai", date, time),
-            AchievementItem("Albert Einstine Statue", date, time),
-            AchievementItem("Angel", date, time),
-            AchievementItem("President's House", date, time),
-            AchievementItem("KaKaKa", date, time)
+            UnlockAchievementItem("LuLuLu"),
+            UnlockAchievementItem("NaNaNa"),
+            UnlockAchievementItem("HaHaHa"),
+            UnlockAchievementItem("WHATTTTTT")
         )
     }
 
@@ -58,11 +55,12 @@ class AchievementsFragment : Fragment() {
 
         homeActiveContainer.background = null
         ivHome.alpha = 0.6f
-        ivStar.alpha = 1f
+        ivStar.alpha = 0.6f
+        ivHelp.alpha = 1f
         ivProfile.background = null
         ivStar.background = null
         ivHelp.background = null
-        ivStar.setBackgroundResource(R.drawable.nav_item_bg_circle)
+        ivHelp.setBackgroundResource(R.drawable.nav_item_bg_circle)
 
         ivProfile.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -75,12 +73,12 @@ class AchievementsFragment : Fragment() {
                 .commit()
         }
         ivStar.setOnClickListener {
-            // Already on Achievements
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, AchievementsFragment())
+                .commit()
         }
         ivHelp.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AchievementsUnlockFragment())
-                .commit()
+            // Already here
         }
         scanFab.setOnClickListener {
             // TODO: Handle scan

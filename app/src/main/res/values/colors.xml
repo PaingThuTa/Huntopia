@@ -22,6 +22,7 @@
     <color name="purple_dark">#6249D6</color>
     <color name="purple_light">#E7E1FF</color>
     <color name="purple_lighter">#F1EDFF</color>
+    <color name="purple_hint">#AB94FF</color>
 
     <color name="orange_primary">#F4C77A</color>
     <color name="orange_soft">#F9E4BE</color>

@@ -7,13 +7,14 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class AchievementsAdapter(
-    private val items: List<AchievementItem>
+    private val items: List<AchievementItem>,
+    private val onItemClick: (AchievementItem) -> Unit
 ) : RecyclerView.Adapter<AchievementsAdapter.AchievementViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AchievementViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_achievement, parent, false)
-        return AchievementViewHolder(view)
+        return AchievementViewHolder(view, onItemClick)
     }
 
     override fun onBindViewHolder(holder: AchievementViewHolder, position: Int) {
@@ -22,7 +23,10 @@ class AchievementsAdapter(
 
     override fun getItemCount(): Int = items.size
 
-    class AchievementViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class AchievementViewHolder(
+        itemView: View,
+        private val onItemClick: (AchievementItem) -> Unit
+    ) : RecyclerView.ViewHolder(itemView) {
         private val tvName: TextView = itemView.findViewById(R.id.tvName)
         private val tvDate: TextView = itemView.findViewById(R.id.tvDate)
         private val tvTime: TextView = itemView.findViewById(R.id.tvTime)
@@ -31,6 +35,7 @@ class AchievementsAdapter(
             tvName.text = item.title
             tvDate.text = "Achieved on ${item.achievedDate}"
             tvTime.text = item.achievedTime
+            itemView.setOnClickListener { onItemClick(item) }
         }
     }
 }

@@ -24,6 +24,9 @@
             android:layout_height="@dimen/avatar_size"
             android:contentDescription="Profile"
             android:src="@drawable/profile"
+            android:clickable="true"
+            android:focusable="true"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Circular" />

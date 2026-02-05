@@ -18,6 +18,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         val viewAchievementsButton = view.findViewById<View>(R.id.view_achievements_button)
         val recyclerView: RecyclerView = view.findViewById(R.id.recently_list)
         val scanFab: View = view.findViewById(R.id.scan_fab)
+        val profileImage: View = view.findViewById(R.id.profile_image)
         val ivProfile: android.widget.ImageView = view.findViewById(R.id.iv_profile)
         val ivHome: android.widget.ImageView = view.findViewById(R.id.iv_home)
         val ivStar: android.widget.ImageView = view.findViewById(R.id.iv_star)
@@ -37,13 +38,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = RecentAchievementAdapter(items) { item ->
-            Toast.makeText(requireContext(), item.title, Toast.LENGTH_SHORT).show()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, AchievementDetailsFragment.newInstance(item.title, true))
+                .addToBackStack(null)
+                .commit()
         }
         recyclerView.setHasFixedSize(true)
         recyclerView.addItemDecoration(VerticalSpaceItemDecoration(dpToPx(16)))
 
         ivProfile.setOnClickListener {
-            Toast.makeText(requireContext(), "Profile", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ProfileFragment())
+                .commit()
         }
         ivHome.setOnClickListener {
             Toast.makeText(requireContext(), "Home", Toast.LENGTH_SHORT).show()
@@ -54,10 +60,18 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 .commit()
         }
         ivHelp.setOnClickListener {
-            Toast.makeText(requireContext(), "Help", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, AchievementsUnlockFragment())
+                .commit()
         }
         scanFab.setOnClickListener {
             Toast.makeText(requireContext(), "Scan", Toast.LENGTH_SHORT).show()
+        }
+
+        profileImage.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ProfileFragment())
+                .commit()
         }
 
         viewAchievementsButton.setOnClickListener {

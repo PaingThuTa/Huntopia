@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="20dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="6dp"
+    app:cardUseCompatPadding="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="18dp">
+
+        <FrameLayout
+            android:id="@+id/iconBox"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:background="@drawable/bg_icon_box"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <ImageView
+                android:id="@+id/ivHelp"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_gravity="center"
+                android:contentDescription="Hint"
+                android:src="@drawable/ic_nav_help"
+                android:tint="@color/orange_icon" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="12dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="LuLuLu"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvHint"
+            app:layout_constraintStart_toEndOf="@id/iconBox"
+            app:layout_constraintTop_toTopOf="@id/iconBox" />
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_chip"
+            android:paddingHorizontal="12dp"
+            android:paddingVertical="6dp"
+            android:text="Not Achieved yet"
+            android:textColor="@color/text_secondary"
+            android:textSize="10sp"
+            app:layout_constraintStart_toStartOf="@id/tvName"
+            app:layout_constraintTop_toBottomOf="@id/tvName" />
+
+        <TextView
+            android:id="@+id/tvHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hint?"
+            android:textColor="@color/purple_hint"
+            android:textSize="11sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tvName" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

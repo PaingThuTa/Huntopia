@@ -1,6 +1,5 @@
 package com.example.huntopia
 
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,41 +9,38 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-class AchievementsFragment : Fragment() {
+class ProfileFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.fragment_achievements, container, false)
+        return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.rvAchievements)
+        val recyclerView = view.findViewById<RecyclerView>(R.id.rvRecent)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = AchievementsAdapter(buildDummyItems()) { item ->
+        recyclerView.adapter = RecentAchievementAdapter(buildDummyItems()) { item ->
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, AchievementDetailsFragment.newInstance(item.title, true))
                 .addToBackStack(null)
                 .commit()
         }
-        recyclerView.addItemDecoration(SpacingItemDecoration(dpToPx(18)))
+        recyclerView.setHasFixedSize(true)
+        recyclerView.addItemDecoration(HomeFragment.VerticalSpaceItemDecoration(dpToPx(16)))
 
         setupBottomNav(view)
     }
 
-    private fun buildDummyItems(): List<AchievementItem> {
-        val date = "30/1/2026"
-        val time = "10:00 AM"
+    private fun buildDummyItems(): List<RecentAchievement> {
         return listOf(
-            AchievementItem("Sala Thai", date, time),
-            AchievementItem("Albert Einstine Statue", date, time),
-            AchievementItem("Angel", date, time),
-            AchievementItem("President's House", date, time),
-            AchievementItem("KaKaKa", date, time)
+            RecentAchievement("Sala Thai", "30/1/2026"),
+            RecentAchievement("Albert Einstine Statue", "12/1/2026"),
+            RecentAchievement("Angel", "29/12/2025")
         )
     }
 
@@ -58,16 +54,16 @@ class AchievementsFragment : Fragment() {
 
         homeActiveContainer.background = null
         ivHome.alpha = 0.6f
-        ivStar.alpha = 1f
+        ivStar.alpha = 0.6f
+        ivHelp.alpha = 0.6f
+        ivProfile.alpha = 1f
         ivProfile.background = null
         ivStar.background = null
         ivHelp.background = null
-        ivStar.setBackgroundResource(R.drawable.nav_item_bg_circle)
+        ivProfile.setBackgroundResource(R.drawable.nav_item_bg_circle)
 
         ivProfile.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, ProfileFragment())
-                .commit()
+            // Already here
         }
         ivHome.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -75,7 +71,9 @@ class AchievementsFragment : Fragment() {
                 .commit()
         }
         ivStar.setOnClickListener {
-            // Already on Achievements
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, AchievementsFragment())
+                .commit()
         }
         ivHelp.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -89,20 +87,5 @@ class AchievementsFragment : Fragment() {
 
     private fun dpToPx(dp: Int): Int {
         return (dp * resources.displayMetrics.density).toInt()
-    }
-
-    private class SpacingItemDecoration(private val spacePx: Int) : RecyclerView.ItemDecoration() {
-        override fun getItemOffsets(
-            outRect: Rect,
-            view: View,
-            parent: RecyclerView,
-            state: RecyclerView.State
-        ) {
-            val position = parent.getChildAdapterPosition(view)
-            if (position == 0) {
-                outRect.top = spacePx
-            }
-            outRect.bottom = spacePx
-        }
     }
 }
