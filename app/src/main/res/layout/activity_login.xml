@@ -87,14 +87,15 @@
         app:layout_constraintTop_toBottomOf="@id/logoCard" />
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/usernameInputLayout"
+        android:id="@+id/emailInputLayout"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="32dp"
         android:background="@drawable/bg_input_rounded"
-        android:hint="@string/username_hint"
+        android:hint="email
+"
         app:hintTextColor="@color/input_hint"
         app:boxBackgroundMode="none"
         app:layout_constraintEnd_toEndOf="parent"
@@ -102,16 +103,18 @@
         app:layout_constraintTop_toBottomOf="@id/titleText">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/emailInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
             android:fontFamily="@font/lexend_deca_regular"
             android:gravity="center_vertical"
+            android:inputType="textEmailAddress"
             android:minHeight="56dp"
-            android:paddingTop="14dp"
-            android:paddingBottom="14dp"
             android:paddingStart="20dp"
+            android:paddingTop="14dp"
             android:paddingEnd="20dp"
+            android:paddingBottom="14dp"
             android:textColor="@color/input_text"
             android:textColorHint="@color/input_hint" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -129,20 +132,22 @@
         app:boxBackgroundMode="none"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/usernameInputLayout">
+        app:layout_constraintTop_toBottomOf="@id/emailInputLayout">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/passwordInput"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
             android:fontFamily="@font/lexend_deca_regular"
             android:gravity="center_vertical"
             android:inputType="textPassword"
-            android:minHeight="56dp"
-            android:paddingTop="14dp"
-            android:paddingBottom="14dp"
+            android:minHeight="60dp"
             android:paddingStart="20dp"
+            android:paddingTop="14dp"
             android:paddingEnd="20dp"
+            android:paddingBottom="14dp"
+            android:textAlignment="viewStart"
             android:textColor="@color/input_text"
             android:textColorHint="@color/input_hint" />
     </com.google.android.material.textfield.TextInputLayout>

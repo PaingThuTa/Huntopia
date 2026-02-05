@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "15262007084",
+    "project_id": "huntopia-7cd15",
+    "storage_bucket": "huntopia-7cd15.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:15262007084:android:491f87ee5810f582323689",
+        "android_client_info": {
+          "package_name": "com.example.huntopia"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "15262007084-v61kah7f530lt65ll9il6la6vc4boga6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBamOR41osBa3vtatMlrsC5pNc5xGyox44"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "15262007084-v61kah7f530lt65ll9il6la6vc4boga6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
