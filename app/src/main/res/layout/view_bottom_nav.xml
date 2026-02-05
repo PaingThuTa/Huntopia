@@ -3,14 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/bottom_nav_root"
     android:layout_width="match_parent"
-    android:layout_height="110dp"
+    android:layout_height="72dp"
     android:clipChildren="false"
     android:clipToPadding="false">
 
     <FrameLayout
         android:id="@+id/bottom_bar"
         android:layout_width="match_parent"
-        android:layout_height="88dp"
+        android:layout_height="72dp"
         android:layout_gravity="bottom"
         android:background="@drawable/bg_bottom_bar"
         android:clipToOutline="true"
@@ -23,45 +23,35 @@
             android:paddingStart="24dp"
             android:paddingEnd="24dp">
 
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline_25"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.25" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guideline_75"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.75" />
-
             <ImageView
                 android:id="@+id/iv_profile"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:padding="4dp"
                 android:contentDescription="Profile"
                 android:src="@drawable/ic_nav_person"
                 android:tint="@color/orange_icon"
                 android:alpha="0.6"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/home_active_container"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHorizontal_chainStyle="spread" />
 
             <FrameLayout
                 android:id="@+id/home_active_container"
-                android:layout_width="46dp"
-                android:layout_height="46dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:background="@drawable/bg_home_active_circle"
-                app:layout_constraintStart_toStartOf="@id/guideline_25"
+                app:layout_constraintStart_toEndOf="@id/iv_profile"
+                app:layout_constraintEnd_toStartOf="@id/iv_star"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
 
                 <ImageView
                     android:id="@+id/iv_home"
-                    android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
                     android:layout_gravity="center"
                     android:contentDescription="Home"
                     android:src="@drawable/ic_nav_home"
@@ -70,24 +60,28 @@
 
             <ImageView
                 android:id="@+id/iv_star"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:padding="4dp"
                 android:contentDescription="Achievements"
                 android:src="@drawable/ic_nav_star"
                 android:tint="@color/orange_icon"
                 android:alpha="0.6"
-                app:layout_constraintStart_toStartOf="@id/guideline_75"
+                app:layout_constraintStart_toEndOf="@id/home_active_container"
+                app:layout_constraintEnd_toStartOf="@id/iv_help"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
 
             <ImageView
                 android:id="@+id/iv_help"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:padding="4dp"
                 android:contentDescription="Help"
                 android:src="@drawable/ic_nav_help"
                 android:tint="@color/orange_icon"
                 android:alpha="0.6"
+                app:layout_constraintStart_toEndOf="@id/iv_star"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
@@ -97,18 +91,17 @@
 
     <FrameLayout
         android:id="@+id/scan_fab"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_gravity="center_horizontal|top"
-        android:translationY="-24dp"
+        android:layout_width="44dp"
+        android:layout_height="44dp"
+        android:layout_gravity="center"
         android:background="@drawable/bg_center_scan"
-        android:elevation="10dp"
+        android:elevation="6dp"
         android:clipToOutline="true"
         android:outlineProvider="background">
 
         <ImageView
-            android:layout_width="34dp"
-            android:layout_height="34dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:layout_gravity="center"
             android:contentDescription="Scan"
             android:src="@drawable/ic_nav_scan"
