@@ -49,7 +49,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             Toast.makeText(requireContext(), "Home", Toast.LENGTH_SHORT).show()
         }
         ivStar.setOnClickListener {
-            Toast.makeText(requireContext(), "Achievements", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, AchievementsFragment())
+                .commit()
         }
         ivHelp.setOnClickListener {
             Toast.makeText(requireContext(), "Help", Toast.LENGTH_SHORT).show()
@@ -59,7 +61,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         viewAchievementsButton.setOnClickListener {
-            Toast.makeText(requireContext(), "View Achievements", Toast.LENGTH_SHORT).show()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, AchievementsFragment())
+                .commit()
         }
     }
 
