@@ -15,4 +15,18 @@
     <color name="dot_purple">#E8D7FF</color>
     <color name="dot_green">#D9F4E7</color>
     <color name="dot_pink">#FFDDEB</color>
+
+    <!-- Home screen palette -->
+    <color name="bg_surface">#F7FAFB</color>
+    <color name="purple_primary">#7B5CFF</color>
+    <color name="purple_dark">#6249D6</color>
+    <color name="purple_light">#E7E1FF</color>
+    <color name="purple_lighter">#F1EDFF</color>
+
+    <color name="orange_primary">#F4C77A</color>
+    <color name="orange_soft">#F9E4BE</color>
+    <color name="orange_icon">#F2B24C</color>
+
+    <color name="text_primary">#2C2C2C</color>
+    <color name="text_secondary">#6B6B6B</color>
 </resources>
