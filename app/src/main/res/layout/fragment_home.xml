@@ -4,6 +4,8 @@
     android:id="@+id/home_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
     android:background="@color/bg_surface">
 
     <androidx.constraintlayout.widget.ConstraintLayout
