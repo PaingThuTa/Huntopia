@@ -42,22 +42,26 @@
             android:maxLines="1"
             android:text="LuLuLu"
             android:textColor="@color/text_primary"
-            android:textSize="14sp"
+            android:textSize="18sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toStartOf="@+id/tvHint"
             app:layout_constraintStart_toEndOf="@id/iconBox"
             app:layout_constraintTop_toTopOf="@id/iconBox" />
 
         <TextView
             android:id="@+id/tvStatus"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_chip"
+            android:ellipsize="end"
+            android:maxLines="1"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
             android:text="Not Achieved yet"
-            android:textColor="@color/text_secondary"
-            android:textSize="10sp"
+            android:textColor="@color/purple_dark"
+            android:textSize="13sp"
+            app:layout_constraintEnd_toStartOf="@+id/tvHint"
             app:layout_constraintStart_toStartOf="@id/tvName"
             app:layout_constraintTop_toBottomOf="@id/tvName" />
 
@@ -65,11 +69,13 @@
             android:id="@+id/tvHint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Hint?"
+            android:text="Locked"
             android:textColor="@color/purple_hint"
-            android:textSize="11sp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="@id/tvStatus"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvName" />
+            app:layout_constraintTop_toTopOf="@id/tvStatus" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

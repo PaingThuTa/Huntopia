@@ -35,7 +35,7 @@ class AchievementDetailsFragment : Fragment() {
             "This achievement is still locked. Find the hint to unlock it."
         }
         tvDate.text = if (isAchieved) {
-            "Achieved on 30 Jan, 2026"
+            "30 Jan, 2026"
         } else {
             "Not achieved yet"
         }

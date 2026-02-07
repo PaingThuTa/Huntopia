@@ -33,7 +33,7 @@ class RecentAchievementAdapter(
 
         fun bind(item: RecentAchievement) {
             titleText.text = item.title
-            dateChip.text = "Achieved on\n${item.dateLabel}"
+            dateChip.text = item.dateLabel
             itemView.setOnClickListener { onItemClick(item) }
         }
     }

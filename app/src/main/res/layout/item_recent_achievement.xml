@@ -60,7 +60,7 @@
             android:paddingEnd="12dp"
             android:paddingTop="6dp"
             android:paddingBottom="6dp"
-            android:text="Achieved on\n30/1/2026"
+            android:text="30/1/2026"
             android:textColor="@color/purple_dark"
             android:textSize="12sp"
             android:gravity="center"

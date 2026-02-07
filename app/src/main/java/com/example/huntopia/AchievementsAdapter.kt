@@ -33,7 +33,7 @@ class AchievementsAdapter(
 
         fun bind(item: AchievementItem) {
             tvName.text = item.title
-            tvDate.text = "Achieved on ${item.achievedDate}"
+            tvDate.text = item.achievedDate
             tvTime.text = item.achievedTime
             itemView.setOnClickListener { onItemClick(item) }
         }
