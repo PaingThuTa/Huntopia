@@ -36,7 +36,7 @@
                 app:layout_constraintEnd_toStartOf="@id/home_active_container"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintHorizontal_chainStyle="spread" />
+                app:layout_constraintHorizontal_chainStyle="spread_inside" />
 
             <FrameLayout
                 android:id="@+id/home_active_container"
@@ -44,7 +44,7 @@
                 android:layout_height="44dp"
                 android:background="@drawable/bg_home_active_circle"
                 app:layout_constraintStart_toEndOf="@id/iv_profile"
-                app:layout_constraintEnd_toStartOf="@id/iv_star"
+                app:layout_constraintEnd_toStartOf="@id/nav_center_spacer"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent">
 
@@ -58,6 +58,15 @@
                     android:tint="@color/orange_icon" />
             </FrameLayout>
 
+            <View
+                android:id="@+id/nav_center_spacer"
+                android:layout_width="76dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toEndOf="@id/home_active_container"
+                app:layout_constraintEnd_toStartOf="@id/iv_star"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent" />
+
             <ImageView
                 android:id="@+id/iv_star"
                 android:layout_width="44dp"
@@ -67,7 +76,7 @@
                 android:src="@drawable/ic_nav_star"
                 android:tint="@color/orange_icon"
                 android:alpha="0.6"
-                app:layout_constraintStart_toEndOf="@id/home_active_container"
+                app:layout_constraintStart_toEndOf="@id/nav_center_spacer"
                 app:layout_constraintEnd_toStartOf="@id/iv_help"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent" />
