@@ -31,7 +31,11 @@ class ProfileFragment : Fragment() {
                 .commit()
         }
         recyclerView.setHasFixedSize(true)
-        recyclerView.addItemDecoration(HomeFragment.VerticalSpaceItemDecoration(dpToPx(16)))
+        recyclerView.addItemDecoration(
+            HomeFragment.VerticalSpaceItemDecoration(
+                resources.getDimensionPixelSize(R.dimen.recent_list_item_spacing)
+            )
+        )
 
         setupBottomNav(view)
     }
@@ -85,7 +89,4 @@ class ProfileFragment : Fragment() {
         }
     }
 
-    private fun dpToPx(dp: Int): Int {
-        return (dp * resources.displayMetrics.density).toInt()
-    }
 }

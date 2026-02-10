@@ -44,7 +44,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 .commit()
         }
         recyclerView.setHasFixedSize(true)
-        recyclerView.addItemDecoration(VerticalSpaceItemDecoration(dpToPx(16)))
+        recyclerView.addItemDecoration(
+            VerticalSpaceItemDecoration(resources.getDimensionPixelSize(R.dimen.recent_list_item_spacing))
+        )
 
         ivProfile.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -79,10 +81,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 .replace(R.id.fragment_container, AchievementsFragment())
                 .commit()
         }
-    }
-
-    private fun dpToPx(dp: Int): Int {
-        return (dp * resources.displayMetrics.density).toInt()
     }
 
     class VerticalSpaceItemDecoration(private val verticalSpace: Int) : RecyclerView.ItemDecoration() {
