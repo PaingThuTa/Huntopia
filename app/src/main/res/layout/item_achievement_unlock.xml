@@ -13,11 +13,13 @@
         android:layout_height="wrap_content"
         android:padding="18dp">
 
-        <FrameLayout
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/iconBox"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:background="@drawable/bg_icon_box"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardUseCompatPadding="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
@@ -29,10 +31,10 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:contentDescription="Achievement icon"
-                android:padding="8dp"
+                android:padding="0dp"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_nav_help" />
-        </FrameLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/tvName"
@@ -57,7 +59,7 @@
 
         <TextView
             android:id="@+id/tvStatus"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_chip"
@@ -68,7 +70,6 @@
             android:text="Not Achieved yet"
             android:textColor="@color/purple_dark"
             android:textSize="13sp"
-            app:layout_constraintEnd_toStartOf="@+id/tvHint"
             app:layout_constraintStart_toStartOf="@id/tvName"
             app:layout_constraintTop_toBottomOf="@id/tvName" />
 

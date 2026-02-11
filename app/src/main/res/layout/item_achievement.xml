@@ -13,44 +13,53 @@
         android:layout_height="wrap_content"
         android:padding="18dp">
 
-        <FrameLayout
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/iconBox"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@drawable/bg_icon_box"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:cardUseCompatPadding="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
             <ImageView
-                android:id="@+id/ivStar"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:id="@+id/ivIcon"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:contentDescription="Star"
-                android:src="@drawable/ic_nav_star"
-                android:tint="@color/orange_icon" />
-        </FrameLayout>
+                android:adjustViewBounds="true"
+                android:contentDescription="Achievement icon"
+                android:padding="0dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_nav_star" />
+        </com.google.android.material.card.MaterialCardView>
 
         <TextView
             android:id="@+id/tvName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:minLines="1"
             android:text="Sala Thai"
             android:textColor="@color/text_primary"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/timeCluster"
+            app:autoSizeMaxTextSize="16sp"
+            app:autoSizeMinTextSize="13sp"
+            app:autoSizeStepGranularity="0.5sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iconBox"
             app:layout_constraintTop_toTopOf="@id/iconBox" />
 
         <TextView
-            android:id="@+id/tvDate"
-            android:layout_width="0dp"
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_chip"
@@ -58,42 +67,11 @@
             android:maxLines="1"
             android:paddingHorizontal="12dp"
             android:paddingVertical="6dp"
-            android:text="30/1/2026"
+            android:text="Achieved on 30/1/2026"
             android:textColor="@color/purple_dark"
             android:textSize="13sp"
-            app:layout_constraintEnd_toStartOf="@+id/timeCluster"
             app:layout_constraintStart_toStartOf="@id/tvName"
             app:layout_constraintTop_toBottomOf="@id/tvName" />
-
-        <LinearLayout
-            android:id="@+id/timeCluster"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="4dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="@id/tvDate"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/tvDate">
-
-            <ImageView
-                android:id="@+id/ivClock"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
-                android:contentDescription="Time"
-                android:src="@android:drawable/ic_lock_idle_alarm"
-                android:tint="@color/purple_primary" />
-
-            <TextView
-                android:id="@+id/tvTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:text="10:00 AM"
-                android:textColor="@color/purple_primary"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
