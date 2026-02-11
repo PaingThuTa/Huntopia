@@ -38,10 +38,30 @@ class AchievementsUnlockFragment : Fragment() {
 
     private fun buildDummyItems(): List<UnlockAchievementItem> {
         return listOf(
-            UnlockAchievementItem("LuLuLu"),
-            UnlockAchievementItem("NaNaNa"),
-            UnlockAchievementItem("HaHaHa"),
-            UnlockAchievementItem("WHATTTTTT")
+            UnlockAchievementItem("1001", "Where time stands tall", "clocktower"),
+            UnlockAchievementItem("1002", "Shopping or snacking?", "aumall"),
+            UnlockAchievementItem("1003", "Where innovation begins", "vmes"),
+            UnlockAchievementItem("1004", "Legends in motion", "fivehorses"),
+            UnlockAchievementItem("1005", "Fit for the journey", "jp2sport"),
+            UnlockAchievementItem("1006", "A taste of elegance", "crystal"),
+            UnlockAchievementItem("1007", "Where tech meets innovation", "itbuilding"),
+            UnlockAchievementItem("1008", "A touch of tradition", "salathai"),
+            UnlockAchievementItem("1009", "Take a dive", "indoorswim"),
+            UnlockAchievementItem("1010", "Peace and grace", "church"),
+            UnlockAchievementItem("1011", "Lights, camera, creativity!", "cabuilding"),
+            UnlockAchievementItem("1012", "Start your journey", "coachterminal"),
+            UnlockAchievementItem("1013", "Design your discovery", "arbuilding"),
+            UnlockAchievementItem("1014", "Where big ideas meet", "conferencecenter"),
+            UnlockAchievementItem("1015", "Dive into excellence", "aquaticcenter"),
+            UnlockAchievementItem("1016", "The business hub", "msm"),
+            UnlockAchievementItem("1017", "The power of analysis", "mse"),
+            UnlockAchievementItem("1018", "A new chapter in health", "medschool"),
+            UnlockAchievementItem("1019", "Game. Set. Match.", "tennis"),
+            UnlockAchievementItem("1020", "Catch it if you can!", "randomtram"),
+            UnlockAchievementItem("1021", "Reach new heights", "clbuilding"),
+            UnlockAchievementItem("1022", "A secret spot awaits", "hiddenhaven"),
+            UnlockAchievementItem("1023", "Where angels stand", "angelstatue"),
+            UnlockAchievementItem("1024", "Our Grand Opening", "spespecial")
         )
     }
 

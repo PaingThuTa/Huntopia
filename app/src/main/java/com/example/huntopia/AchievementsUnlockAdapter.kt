@@ -3,6 +3,7 @@ package com.example.huntopia
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -28,9 +29,17 @@ class AchievementsUnlockAdapter(
         private val onItemClick: (UnlockAchievementItem) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
 
+        private val ivIcon: ImageView = itemView.findViewById(R.id.ivHelp)
         private val tvName: TextView = itemView.findViewById(R.id.tvName)
 
         fun bind(item: UnlockAchievementItem) {
+            val context = itemView.context
+            val resId = context.resources.getIdentifier(
+                item.imageName,
+                "drawable",
+                context.packageName
+            )
+            ivIcon.setImageResource(if (resId != 0) resId else R.drawable.ic_nav_help)
             tvName.text = item.title
             itemView.setOnClickListener { onItemClick(item) }
         }

@@ -15,8 +15,8 @@
 
         <FrameLayout
             android:id="@+id/iconBox"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@drawable/bg_icon_box"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -24,12 +24,14 @@
 
             <ImageView
                 android:id="@+id/ivHelp"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
-                android:contentDescription="Hint"
-                android:src="@drawable/ic_nav_help"
-                android:tint="@color/orange_icon" />
+                android:adjustViewBounds="true"
+                android:contentDescription="Achievement icon"
+                android:padding="8dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_nav_help" />
         </FrameLayout>
 
         <TextView
@@ -37,14 +39,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginEnd="12dp"
+            android:layout_marginEnd="8dp"
             android:ellipsize="end"
             android:maxLines="1"
+            android:minLines="1"
             android:text="LuLuLu"
             android:textColor="@color/text_primary"
-            android:textSize="18sp"
+            android:textSize="16sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/tvHint"
+            app:autoSizeMaxTextSize="16sp"
+            app:autoSizeMinTextSize="13sp"
+            app:autoSizeStepGranularity="0.5sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/iconBox"
             app:layout_constraintTop_toTopOf="@id/iconBox" />
 
