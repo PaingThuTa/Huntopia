@@ -3,6 +3,7 @@ package com.example.huntopia
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
@@ -27,14 +28,20 @@ class AchievementsAdapter(
         itemView: View,
         private val onItemClick: (AchievementItem) -> Unit
     ) : RecyclerView.ViewHolder(itemView) {
+        private val ivIcon: ImageView = itemView.findViewById(R.id.ivIcon)
         private val tvName: TextView = itemView.findViewById(R.id.tvName)
-        private val tvDate: TextView = itemView.findViewById(R.id.tvDate)
-        private val tvTime: TextView = itemView.findViewById(R.id.tvTime)
+        private val tvStatus: TextView = itemView.findViewById(R.id.tvStatus)
 
         fun bind(item: AchievementItem) {
+            val context = itemView.context
+            val resId = context.resources.getIdentifier(
+                item.imageName,
+                "drawable",
+                context.packageName
+            )
+            ivIcon.setImageResource(if (resId != 0) resId else R.drawable.ic_nav_star)
             tvName.text = item.title
-            tvDate.text = item.achievedDate
-            tvTime.text = item.achievedTime
+            tvStatus.text = "Achieved on ${item.achievedDate}"
             itemView.setOnClickListener { onItemClick(item) }
         }
     }

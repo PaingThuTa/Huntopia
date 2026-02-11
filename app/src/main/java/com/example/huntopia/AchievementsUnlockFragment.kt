@@ -27,7 +27,10 @@ class AchievementsUnlockFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = AchievementsUnlockAdapter(buildDummyItems()) { item ->
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AchievementDetailsFragment.newInstance(item.title, false))
+                .replace(
+                    R.id.fragment_container,
+                    AchievementDetailsFragment.newInstance(item.title, false, item.imageName)
+                )
                 .addToBackStack(null)
                 .commit()
         }

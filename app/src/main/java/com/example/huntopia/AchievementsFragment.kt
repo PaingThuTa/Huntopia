@@ -27,7 +27,10 @@ class AchievementsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = AchievementsAdapter(buildDummyItems()) { item ->
             parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AchievementDetailsFragment.newInstance(item.title, true))
+                .replace(
+                    R.id.fragment_container,
+                    AchievementDetailsFragment.newInstance(item.title, true, item.imageName)
+                )
                 .addToBackStack(null)
                 .commit()
         }
@@ -40,11 +43,11 @@ class AchievementsFragment : Fragment() {
         val date = "30/1/2026"
         val time = "10:00 AM"
         return listOf(
-            AchievementItem("Sala Thai", date, time),
-            AchievementItem("Albert Einstine Statue", date, time),
-            AchievementItem("Angel", date, time),
-            AchievementItem("President's House", date, time),
-            AchievementItem("KaKaKa", date, time)
+            AchievementItem("⏰ Clock Tower", date, time, "clocktower"),
+            AchievementItem("🏢 AU Mall & Cafeteria", date, time, "aumall"),
+            AchievementItem("🛠️ VMES", date, time, "vmes"),
+            AchievementItem("🏯 Sala Thai", date, time, "salathai"),
+            AchievementItem("👼🏻 Angel Statue", date, time, "angelstatue")
         )
     }
 
