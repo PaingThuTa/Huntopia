@@ -1,5 +1,7 @@
 package com.example.huntopia
 
 data class UnlockAchievementItem(
-    val title: String
+    val code: String,
+    val title: String,
+    val imageName: String
 )
