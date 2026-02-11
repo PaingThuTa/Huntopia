@@ -61,6 +61,6 @@ pnpm-debug.log*
 
 # Firebase service account (VERY IMPORTANT)
 scripts/serviceAccountKey.json
-
+app/google-services.json
 # Mac
 .DS_Store
