@@ -1,0 +1,242 @@
+[
+  {
+    "isCollected": false,
+    "url": "1001",
+    "imageName": "clocktower",
+    "unfoundTitle": "Where time stands tall",
+    "unfoundDescription": "Find the iconic Clock Tower at AU",
+    "foundTitle": "⏰ Clock Tower",
+    "foundDescription": "You found the Clock Tower! This landmark connects the dormitory area, home to King Solomon, King David, and Queen of Sheba Residence Halls, with a basketball court in the center.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1002",
+    "imageName": "aumall",
+    "unfoundTitle": "Shopping or snacking?",
+    "unfoundDescription": "Visit the AU Mall and Cafeteria",
+    "foundTitle": "🏢 AU Mall & Cafeteria",
+    "foundDescription": "You found AU Mall! This hub offers a two-storey retail space with 47 units and a three-storey cafeteria featuring 15 restaurants across two floors. On the third floor, you'll find Albert Hall, a 100-seat ballroom for events and entertainment.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1003",
+    "imageName": "vmes",
+    "unfoundTitle": "Where innovation begins",
+    "unfoundDescription": "Explore the VMES Building, home to engineering and technology excellence",
+    "foundTitle": "🛠️ VMES",
+    "foundDescription": "You found the Building! Home to the Vincent Mary School of Engineering, Science and Technology, this is where innovation thrives. True Lab was established here thanks to a dedicated group of Computer Science students, making it a centerpiece for cutting-edge projects.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1004",
+    "imageName": "fivehorses",
+    "unfoundTitle": "Legends in motion",
+    "unfoundDescription": "Seek out the iconic 5 Horses of AU, where myths meet tradition",
+    "foundTitle": "🐎 The 5 Horses of AU",
+    "foundDescription": "You discovered the legendary 5 Horses! This iconic landmark isn't just art—it carries a fun AU tradition. Students say the number of horses you see predicts how many years it’ll take to graduate. Four horses? Four years. All five? Well, you might be here a little longer!",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1005",
+    "imageName": "jp2sport",
+    "unfoundTitle": "Fit for the journey",
+    "unfoundDescription": "Discover the John Paul II Sports Center, the ultimate hub for AU athletics",
+    "foundTitle": "🏋 John Paul II Sports",
+    "foundDescription": "You found the John Paul II Sports Center! This complex features a 2,800-seat basketball arena, a fully equipped fitness center, indoor badminton courts, squash rooms, a snooker room, and a 25-meter indoor swimming pool. The heartbeat of sports at AU!",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1006",
+    "imageName": "crystal",
+    "unfoundTitle": "A taste of elegance",
+    "unfoundDescription": "Discover Crystal Restaurant, the unique dining and learning space at AU",
+    "foundTitle": "🍽️ Crystal Restaurant",
+    "foundDescription": "You discovered the Crystal Restaurant by Chez Jean Pierre! A two-storey glass building near the John XXIII Conference Center, this venue is more than fine dining—it’s a classroom. Hospitality students here learn real kitchen operations and barista skills, preparing and serving gourmet dishes under expert guidance.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1007",
+    "imageName": "itbuilding",
+    "unfoundTitle": "Where tech meets innovation",
+    "unfoundDescription": "Explore the Srisakdi Charmonman Building, the hub of digital learning",
+    "foundTitle": "💻 IT",
+    "foundDescription": "You found the Srisakdi Charmonman Building! Officially named after Prof. Dr. Srisakdi Charmonman, this center is the heart of Assumption University's IT education. A center for IT excellence, offering Computer Science and IT programs that shape future tech leaders.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1008",
+    "imageName": "salathai",
+    "unfoundTitle": "A touch of tradition",
+    "unfoundDescription": "Discover the iconic Thai pavilion at AU, a true cultural gem",
+    "foundTitle": "🏯 Sala Thai",
+    "foundDescription": "Step into tradition! Officially named Sala Chaturamuk Phaichit, this elegant Thai-style pavilion is a symbol of cultural heritage and one of the most iconic landmarks on campus. A favorite spot for photos and a serene escape from the modern architecture around it.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1009",
+    "imageName": "indoorswim",
+    "unfoundTitle": "Take a dive",
+    "unfoundDescription": "Find the indoor swimming pool at AU for a refreshing break",
+    "foundTitle": "🏊 Indoor Pool",
+    "foundDescription": "You found the Indoor Swimming Pool! Connected to the John Paul II Sports Center, this 25-meter pool is exclusively for AU students and faculty members, offering a refreshing way to stay active and unwind.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1010",
+    "imageName": "church",
+    "unfoundTitle": "Peace and grace",
+    "unfoundDescription": "Find the St. Louis Chapel, the spiritual heart of AU",
+    "foundTitle": "⛪ Church",
+    "foundDescription": "You found the St. Louis Marie de Montfort Chapel Church! Located behind the John Paul XXIII Conference Center, this sacred space is the heart of spiritual life at AU. It hosts the annual Assumption Day celebration and the Crowning Ceremony, inviting students and faculty to gather for worship and reflection.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1011",
+    "imageName": "cabuilding",
+    "unfoundTitle": "Lights, camera, creativity!",
+    "unfoundDescription": "Discover the Communication Arts Building, the home of media and expression",
+    "foundTitle": "🎬 CA",
+    "foundDescription": "Albert Laurence School of Communication Arts. Where creativity speaks! The Communication Arts Building is where stories are born and media magic happens. From broadcasting studios to design labs, this is the hub for future media professionals at AU.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1012",
+    "imageName": "coachterminal",
+    "unfoundTitle": "Start your journey",
+    "unfoundDescription": "Find the Coach Terminal, the gateway to AU Hua Mak campus",
+    "foundTitle": "🚌 Coach Terminal",
+    "foundDescription": "All aboard! The Coach Terminal is your starting point for traveling between AU’s Suvarnabhumi and Hua Mak campus. Forget guessing the schedule—our app lets you track the coach in real time, so you always know when it’s on the move.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1013",
+    "imageName": "arbuilding",
+    "unfoundTitle": "Design your discovery",
+    "unfoundDescription": "Visit the AR Building, the home of architecture and creativity",
+    "foundTitle": "🏛️ AR",
+    "foundDescription": "Montfort del Rosario School of Architecture and Design. Where vision becomes structure! The birthplace of AU’s most creative minds—and yes, even the famous 'Lung Knight the Ceasar' started his journey here. Who knows? Maybe you’ll be the next legend!",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1014",
+    "imageName": "conferencecenter",
+    "unfoundTitle": "Where big ideas meet",
+    "unfoundDescription": "Discover the John XXIII Conference Center, AU’s hub for academic and cultural events",
+    "foundTitle": "🏢 Conference Center",
+    "foundDescription": "Step into the John XXIII Conference Center! This two-story venue hosts AU’s major events, from academic conventions to cultural receptions. Equipped with modern facilities, including meeting rooms for up to 300 guests, it reflects AU’s spirit of global collaboration—honoring Pope John XXIII in name and purpose.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1015",
+    "imageName": "aquaticcenter",
+    "unfoundTitle": "Dive into excellence",
+    "unfoundDescription": "Discover AU’s Aquatic Center, home of championship-level swimming",
+    "foundTitle": "🌊 Aquatic Center",
+    "foundDescription": "Dive into action! This world-class venue has hosted the 46th SEA Age Group Swimming and Diving Championships 2024, welcoming athletes from 11 Southeast Asian nations. A true pride of AU, it stands as a symbol of sporting excellence and international recognition.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1016",
+    "imageName": "msm",
+    "unfoundTitle": "The business hub",
+    "unfoundDescription": "Find the MSM Building, home to AU’s School of Management",
+    "foundTitle": "💼 MSM",
+    "foundDescription": "Welcome to the MSM Building! Home to AU’s Martin de Tours School of Management and Economics, this is where future leaders and innovators are shaped. Offering world-class programs in business, marketing, finance, and hospitality, MSM combines academic excellence with real-world practice.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1017",
+    "imageName": "mse",
+    "unfoundTitle": "The power of analysis",
+    "unfoundDescription": "Find the Economics Building",
+    "foundTitle": "📊 MSE",
+    "foundDescription": "Explore the School of Economics, part of AU’s prestigious Martin de Tours School of Management and Economics (MSME). This hub shapes analytical thinkers, focusing on economic theory, research, and policy—preparing students for global careers in business and finance.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1018",
+    "imageName": "medschool",
+    "unfoundTitle": "A new chapter in health",
+    "unfoundDescription": "Find the St. Luke School of Medicine, AU’s newest faculty",
+    "foundTitle": "💊 AUMD",
+    "foundDescription": "Welcome to the St. Luke School of Medicine! As AU’s newest international faculty, this state-of-the-art center is dedicated to shaping future doctors through innovative medical education, research, and global healthcare standards.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1019",
+    "imageName": "tennis",
+    "unfoundTitle": "Game. Set. Match.",
+    "unfoundDescription": "Find the indoor tennis court at AU and serve up some fun",
+    "foundTitle": "🎾 Indoor Tennis Court",
+    "foundDescription": "Ace it! The Indoor Tennis Court is a top-notch facility for players to practice and compete year-round, rain or shine. It’s the perfect spot for students and faculty to stay active and enjoy the game in a world-class environment.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1020",
+    "imageName": "randomtram",
+    "unfoundTitle": "Catch it if you can!",
+    "unfoundDescription": "Find this AU Tram as it moves around the campus",
+    "foundTitle": "🚋 A Random AU Tram",
+    "foundDescription": "Got it! You spotted the AU Tram in action. Normally circling from MSM, IT, AU Mall, and Queen of Sheba Hall, this tram keeps campus life moving. Sometimes it even takes visitors on special routes. Track its motion anytime using our 3D map feature!",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1021",
+    "imageName": "clbuilding",
+    "unfoundTitle": "Reach new heights",
+    "unfoundDescription": "Discover the Cathedral of Learning—one of the world’s tallest campus buildings",
+    "foundTitle": "🏙️ CL",
+    "foundDescription": "You discovered the Cathedral of Learning! At 159 m and 39 stories, it's the 5th tallest educational-purpose building worldwide. A majestic symbol of knowledge at AU, it stands as an iconic landmark and a must-see on campus.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1022",
+    "imageName": "hiddenhaven",
+    "unfoundTitle": "A secret spot awaits",
+    "unfoundDescription": "Can you find the hidden garden on campus?",
+    "foundTitle": "🌿 Hidden Haven",
+    "foundDescription": "You found the Hidden Haven! Tucked away from the busy campus, this secret garden is a quiet escape for those who know where to look. A perfect spot to recharge, relax, and enjoy a moment of peace.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1023",
+    "imageName": "angelstatue",
+    "unfoundTitle": "Where angels stand",
+    "unfoundDescription": "Find the Angel Statue on Martin Rangsan Bridge",
+    "foundTitle": "👼🏻 Angel Statue",
+    "foundDescription": "You discovered the Angel Statue! Standing gracefully on Martin Rangsan Bridge, this landmark is a symbol of elegance and one of the most photo-worthy spots on campus.",
+    "dateCollected": "N/A"
+  },
+  {
+    "isCollected": false,
+    "url": "1024",
+    "imageName": "spespecial",
+    "unfoundTitle": "Our Grand Opening",
+    "unfoundDescription": "Come find us at VMES Building on our very first day!",
+    "foundTitle": "🤟🏼 COMSCI SP 1/2025",
+    "foundDescription": "Thank you for celebrating our Grand Opening at the VMES Building! This special badge marks your support on the very first day of AU Journey’s Senior Project Exhibition 1/2025",
+    "dateCollected": "N/A"
+  }
+]

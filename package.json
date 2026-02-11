@@ -1,0 +1,24 @@
+{
+  "name": "huntopia",
+  "version": "1.0.0",
+  "description": "Huntopia is a campus exploration app that encourages students and visitors to discover university buildings by scanning QR codes to unlock achievement badges. It turns orientation into a lightweight, gamified experience while tracking progress across all locations.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PaingThuTa/Huntopia.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/PaingThuTa/Huntopia/issues"
+  },
+  "homepage": "https://github.com/PaingThuTa/Huntopia#readme",
+  "dependencies": {
+    "firebase-admin": "^13.6.1"
+  }
+}
