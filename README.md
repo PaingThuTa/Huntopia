@@ -24,11 +24,6 @@ Users scan QR codes at campus buildings to claim badges in the app. The app trac
 - Makes orientation more engaging through gamification
 - Simple way to track visited locations
 
-## Getting Started
-- Open the project in Android Studio.
-- Build the app: `./gradlew assembleDebug`
-- Run tests: `./gradlew test`
-
 ## Team
 - Thet Myat Noe Thwin (6530213)
 - Paing Thu Ta (6530288)
