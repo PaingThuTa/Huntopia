@@ -2,9 +2,51 @@
 <resources>
     <string name="app_name">Huntopia</string>
     <string name="login_title">Welcome to Huntopia!</string>
+    <string name="signup_title">Create your account</string>
+    <string name="email_hint">Email</string>
     <string name="username_hint">Username</string>
     <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm password</string>
     <string name="lets_start">Lets Start</string>
+    <string name="create_account">Create Account</string>
+    <string name="create_account_link">Don\'t have an account? Sign up</string>
+    <string name="back_to_login_link">Already have an account? Log in</string>
     <string name="forget_password">forget password</string>
     <string name="logo_cd">Huntopia logo</string>
+    <string name="logout">Log Out</string>
+    <string name="profile_email_placeholder">No email available</string>
+    <string name="profile_username_placeholder">Explorer</string>
+
+    <string name="error_username_required">Username required</string>
+    <string name="error_email_required">Email required</string>
+    <string name="error_invalid_email">Please enter a valid email</string>
+    <string name="error_password_required">Password required</string>
+    <string name="error_confirm_password_required">Please confirm your password</string>
+    <string name="error_password_too_short">Password must be at least 6 characters</string>
+    <string name="error_passwords_do_not_match">Passwords do not match</string>
+    <string name="error_wrong_password">Incorrect password</string>
+    <string name="error_user_not_found">Account not found</string>
+    <string name="error_login_generic">Login failed. Please try again.</string>
+    <string name="error_email_already_in_use">An account with this email already exists</string>
+    <string name="error_signup_generic">Couldn\'t create account. Please try again.</string>
+    <string name="error_load_achievements">Unable to load achievements right now.</string>
+    <string name="error_load_profile">Unable to load profile right now.</string>
+    <string name="warning_showing_all_locked_due_sync_issue">Couldn\'t load your collected achievements. Showing all as locked.</string>
+
+    <string name="login_success">Login successful</string>
+    <string name="signup_success">Account created successfully</string>
+    <string name="warning_profile_sync_failed">Account created, but profile sync failed. We\'ll retry automatically.</string>
+
+    <string name="recently_obtained">Recently Obtained</string>
+    <string name="no_achievements_yet">No achievements yet</string>
+    <string name="all_achievements_unlocked">All achievements unlocked</string>
+    <string name="achievement_not_found">Achievement not found</string>
+    <string name="achievement_desc_unavailable">Description not available.</string>
+    <string name="achievement_locked_hint_default">Find this location to unlock the achievement.</string>
+    <string name="achievement_date_unknown">Achievement date unavailable</string>
+    <string name="not_achieved_yet">Not achieved yet</string>
+    <string name="unknown_date">N/A</string>
+    <string name="unknown_time">N/A</string>
+    <string name="loading">Loading...</string>
+    <string name="home_tab">Home</string>
 </resources>
