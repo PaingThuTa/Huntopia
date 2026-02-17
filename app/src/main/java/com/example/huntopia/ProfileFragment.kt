@@ -6,10 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
+
+    private val repository = AchievementRepository()
+    private lateinit var recyclerView: RecyclerView
+
+    private val fallbackItems = listOf(
+        RecentAchievement("Sala Thai", "30/1/2026"),
+        RecentAchievement("Albert Einstine Statue", "12/1/2026"),
+        RecentAchievement("Angel", "29/12/2025")
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,14 +37,8 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.rvRecent)
+        recyclerView = view.findViewById(R.id.rvRecent)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = RecentAchievementAdapter(buildDummyItems()) { item ->
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AchievementDetailsFragment.newInstance(item.title, true))
-                .addToBackStack(null)
-                .commit()
-        }
         recyclerView.setHasFixedSize(true)
         recyclerView.addItemDecoration(
             HomeFragment.VerticalSpaceItemDecoration(
@@ -37,15 +46,55 @@ class ProfileFragment : Fragment() {
             )
         )
 
+        showFallbackData()
         setupBottomNav(view)
     }
 
-    private fun buildDummyItems(): List<RecentAchievement> {
-        return listOf(
-            RecentAchievement("Sala Thai", "30/1/2026"),
-            RecentAchievement("Albert Einstine Statue", "12/1/2026"),
-            RecentAchievement("Angel", "29/12/2025")
-        )
+    override fun onResume() {
+        super.onResume()
+        loadRecentAchievements()
+    }
+
+    private fun loadRecentAchievements() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            showFallbackData()
+            return
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val recent = repository.getCollectedAchievements(user.uid)
+                    .take(3)
+                    .map {
+                        RecentAchievement(
+                            title = it.foundTitle.ifBlank { it.code },
+                            dateLabel = formatDate(it.collectedAt?.toDate())
+                        )
+                    }
+
+                recyclerView.adapter = RecentAchievementAdapter(recent) { item ->
+                    parentFragmentManager.beginTransaction()
+                        .replace(
+                            R.id.fragment_container,
+                            AchievementDetailsFragment.newInstance(item.title, true)
+                        )
+                        .addToBackStack(null)
+                        .commit()
+                }
+            } catch (_: Exception) {
+                showFallbackData()
+            }
+        }
+    }
+
+    private fun showFallbackData() {
+        recyclerView.adapter = RecentAchievementAdapter(fallbackItems) { item ->
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, AchievementDetailsFragment.newInstance(item.title, true))
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     private fun setupBottomNav(root: View) {
@@ -85,8 +134,17 @@ class ProfileFragment : Fragment() {
                 .commit()
         }
         scanFab.setOnClickListener {
-            // TODO: Handle scan
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ScanFragment())
+                .addToBackStack(null)
+                .commit()
         }
     }
 
+    private fun formatDate(date: Date?): String {
+        if (date == null) {
+            return "N/A"
+        }
+        return SimpleDateFormat("d/M/yyyy", Locale.US).format(date)
+    }
 }

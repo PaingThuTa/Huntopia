@@ -7,10 +7,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class AchievementsUnlockFragment : Fragment() {
+
+    private val repository = AchievementRepository()
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,9 +29,61 @@ class AchievementsUnlockFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.rvUnlock)
+        recyclerView = view.findViewById(R.id.rvUnlock)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = AchievementsUnlockAdapter(buildDummyItems()) { item ->
+        recyclerView.addItemDecoration(SpacingItemDecoration(dpToPx(18)))
+
+        showFallbackItems()
+        setupBottomNav(view)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadUnlockItems()
+    }
+
+    private fun loadUnlockItems() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            showFallbackItems()
+            return
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val catalogItems = repository.getAllCatalogItems()
+                val collectedCodes = repository.getCollectedAchievements(user.uid)
+                    .map { it.code }
+                    .toSet()
+
+                val unlockItems = catalogItems
+                    .filter { it.code !in collectedCodes }
+                    .map {
+                        UnlockAchievementItem(
+                            code = it.code,
+                            title = it.unfoundTitle.ifBlank { "Code ${it.code}" },
+                            imageName = it.imageName
+                        )
+                    }
+
+                recyclerView.adapter = AchievementsUnlockAdapter(unlockItems) { item ->
+                    parentFragmentManager.beginTransaction()
+                        .replace(
+                            R.id.fragment_container,
+                            AchievementDetailsFragment.newInstance(item.title, false, item.imageName)
+                        )
+                        .addToBackStack(null)
+                        .commit()
+                }
+            } catch (_: Exception) {
+                showFallbackItems()
+            }
+        }
+    }
+
+    private fun showFallbackItems() {
+        val items = buildDummyItems()
+        recyclerView.adapter = AchievementsUnlockAdapter(items) { item ->
             parentFragmentManager.beginTransaction()
                 .replace(
                     R.id.fragment_container,
@@ -34,9 +92,6 @@ class AchievementsUnlockFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
-        recyclerView.addItemDecoration(SpacingItemDecoration(dpToPx(18)))
-
-        setupBottomNav(view)
     }
 
     private fun buildDummyItems(): List<UnlockAchievementItem> {
@@ -104,7 +159,10 @@ class AchievementsUnlockFragment : Fragment() {
             // Already here
         }
         scanFab.setOnClickListener {
-            // TODO: Handle scan
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ScanFragment())
+                .addToBackStack(null)
+                .commit()
         }
     }
 

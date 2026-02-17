@@ -7,10 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.auth.FirebaseAuth
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import kotlinx.coroutines.launch
 
 class AchievementsFragment : Fragment() {
+
+    private val repository = AchievementRepository()
+    private lateinit var recyclerView: RecyclerView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -23,9 +32,56 @@ class AchievementsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recyclerView = view.findViewById<RecyclerView>(R.id.rvAchievements)
+        recyclerView = view.findViewById(R.id.rvAchievements)
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = AchievementsAdapter(buildDummyItems()) { item ->
+        recyclerView.addItemDecoration(SpacingItemDecoration(dpToPx(18)))
+
+        showFallbackItems()
+        setupBottomNav(view)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        loadAchievements()
+    }
+
+    private fun loadAchievements() {
+        val user = FirebaseAuth.getInstance().currentUser
+        if (user == null) {
+            showFallbackItems()
+            return
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val collected = repository.getCollectedAchievements(user.uid)
+                val items = collected.map {
+                    AchievementItem(
+                        title = it.foundTitle.ifBlank { it.code },
+                        achievedDate = formatDate(it.collectedAt?.toDate()),
+                        achievedTime = formatTime(it.collectedAt?.toDate()),
+                        imageName = it.imageName
+                    )
+                }
+
+                recyclerView.adapter = AchievementsAdapter(items) { item ->
+                    parentFragmentManager.beginTransaction()
+                        .replace(
+                            R.id.fragment_container,
+                            AchievementDetailsFragment.newInstance(item.title, true, item.imageName)
+                        )
+                        .addToBackStack(null)
+                        .commit()
+                }
+            } catch (_: Exception) {
+                showFallbackItems()
+            }
+        }
+    }
+
+    private fun showFallbackItems() {
+        val items = buildDummyItems()
+        recyclerView.adapter = AchievementsAdapter(items) { item ->
             parentFragmentManager.beginTransaction()
                 .replace(
                     R.id.fragment_container,
@@ -34,9 +90,6 @@ class AchievementsFragment : Fragment() {
                 .addToBackStack(null)
                 .commit()
         }
-        recyclerView.addItemDecoration(SpacingItemDecoration(dpToPx(18)))
-
-        setupBottomNav(view)
     }
 
     private fun buildDummyItems(): List<AchievementItem> {
@@ -86,8 +139,25 @@ class AchievementsFragment : Fragment() {
                 .commit()
         }
         scanFab.setOnClickListener {
-            // TODO: Handle scan
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ScanFragment())
+                .addToBackStack(null)
+                .commit()
         }
+    }
+
+    private fun formatDate(date: Date?): String {
+        if (date == null) {
+            return "N/A"
+        }
+        return SimpleDateFormat("d/M/yyyy", Locale.US).format(date)
+    }
+
+    private fun formatTime(date: Date?): String {
+        if (date == null) {
+            return "N/A"
+        }
+        return SimpleDateFormat("h:mm a", Locale.US).format(date)
     }
 
     private fun dpToPx(dp: Int): Int {
