@@ -59,10 +59,12 @@ class AchievementRepository(
             }
 
             val primaryDocRef = primaryCollectedDocument(normalizedUid, normalizedCode)
+            val collectedTimestamp = FieldValue.serverTimestamp()
             primaryDocRef.set(
                 mapOf(
                     FIELD_CODE to normalizedCode,
-                    FIELD_COLLECTED_AT to FieldValue.serverTimestamp(),
+                    FIELD_COLLECTED_AT to collectedTimestamp,
+                    FIELD_COLLECTED_DATE to collectedTimestamp,
                     FIELD_IMAGE_NAME to catalogItem.imageName,
                     FIELD_FOUND_TITLE to catalogItem.foundTitle,
                     FIELD_FOUND_DESCRIPTION to catalogItem.foundDescription
@@ -70,7 +72,11 @@ class AchievementRepository(
             ).await()
 
             val savedSnapshot = primaryDocRef.get().await()
-            CollectResult.SuccessNew(catalogItem, savedSnapshot.getTimestamp(FIELD_COLLECTED_AT))
+            CollectResult.SuccessNew(
+                catalogItem,
+                savedSnapshot.getTimestamp(FIELD_COLLECTED_AT)
+                    ?: savedSnapshot.getTimestamp(FIELD_COLLECTED_DATE)
+            )
         } catch (error: Exception) {
             CollectResult.Error(error.message ?: "Unknown error")
         }
@@ -257,7 +263,7 @@ class AchievementRepository(
             imageName = getString(FIELD_IMAGE_NAME).orEmpty(),
             foundTitle = getString(FIELD_FOUND_TITLE).orEmpty(),
             foundDescription = getString(FIELD_FOUND_DESCRIPTION).orEmpty(),
-            collectedAt = getTimestamp(FIELD_COLLECTED_AT)
+            collectedAt = getTimestamp(FIELD_COLLECTED_AT) ?: getTimestamp(FIELD_COLLECTED_DATE)
         )
     }
 
@@ -284,6 +290,7 @@ class AchievementRepository(
 
         private const val FIELD_CODE = "code"
         private const val FIELD_COLLECTED_AT = "collectedAt"
+        private const val FIELD_COLLECTED_DATE = "collectedDate"
         private const val FIELD_IMAGE_NAME = "imageName"
         private const val FIELD_UNFOUND_TITLE = "unfoundTitle"
         private const val FIELD_UNFOUND_DESCRIPTION = "unfoundDescription"
