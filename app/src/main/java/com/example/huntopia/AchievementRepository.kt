@@ -1,5 +1,6 @@
 package com.example.huntopia
 
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -52,18 +53,13 @@ class AchievementRepository(
             }
 
             val catalogItem = catalogDoc.toCatalogItem(normalizedCode)
-            val userDocRef = firestore.collection(USERS_COLLECTION)
-                .document(normalizedUid)
-                .collection(COLLECTED_COLLECTION)
-                .document(normalizedCode)
-
-            val existing = userDocRef.get().await()
-            if (existing.exists()) {
-                val existingCollectedAt = existing.getTimestamp(FIELD_COLLECTED_AT)
-                return CollectResult.AlreadyCollected(catalogItem, existingCollectedAt)
+            val existing = getCollectedAchievementByCode(normalizedUid, normalizedCode)
+            if (existing != null) {
+                return CollectResult.AlreadyCollected(catalogItem, existing.collectedAt)
             }
 
-            userDocRef.set(
+            val primaryDocRef = primaryCollectedDocument(normalizedUid, normalizedCode)
+            primaryDocRef.set(
                 mapOf(
                     FIELD_CODE to normalizedCode,
                     FIELD_COLLECTED_AT to FieldValue.serverTimestamp(),
@@ -73,7 +69,7 @@ class AchievementRepository(
                 )
             ).await()
 
-            val savedSnapshot = userDocRef.get().await()
+            val savedSnapshot = primaryDocRef.get().await()
             CollectResult.SuccessNew(catalogItem, savedSnapshot.getTimestamp(FIELD_COLLECTED_AT))
         } catch (error: Exception) {
             CollectResult.Error(error.message ?: "Unknown error")
@@ -86,24 +82,58 @@ class AchievementRepository(
             return emptyList()
         }
 
-        val query = firestore.collection(USERS_COLLECTION)
+        val primaryQuery = firestore.collection(PRIMARY_USERS_COLLECTION)
             .document(normalizedUid)
-            .collection(COLLECTED_COLLECTION)
-            .orderBy(FIELD_COLLECTED_AT)
+            .collection(PRIMARY_COLLECTED_COLLECTION)
             .get()
             .await()
 
-        return query.documents
-            .map { doc ->
-                UserAchievement(
-                    code = doc.getString(FIELD_CODE).orEmpty().ifBlank { doc.id },
-                    imageName = doc.getString(FIELD_IMAGE_NAME).orEmpty(),
-                    foundTitle = doc.getString(FIELD_FOUND_TITLE).orEmpty(),
-                    foundDescription = doc.getString(FIELD_FOUND_DESCRIPTION).orEmpty(),
-                    collectedAt = doc.getTimestamp(FIELD_COLLECTED_AT)
-                )
-            }
-            .sortedByDescending { it.collectedAt?.toDate()?.time ?: 0L }
+        val legacyQuery = firestore.collection(LEGACY_USERS_COLLECTION)
+            .document(normalizedUid)
+            .collection(LEGACY_COLLECTED_COLLECTION)
+            .get()
+            .await()
+
+        val mergedByCode = LinkedHashMap<String, UserAchievement>()
+
+        (primaryQuery.documents + legacyQuery.documents).forEach { doc ->
+            val item = doc.toUserAchievement(doc.id)
+            val key = item.code.ifBlank { doc.id }
+            val current = mergedByCode[key]
+            mergedByCode[key] = choosePreferredAgainstCandidate(current, item)
+        }
+
+        val withCatalogFallback = mergedByCode.values
+            .map { fillMissingCollectedFields(it) }
+
+        return withCatalogFallback.sortedByDescending { it.collectedAt?.toDate()?.time ?: Long.MIN_VALUE }
+    }
+
+    suspend fun getCollectedAchievementByCode(uid: String, code: String): UserAchievement? {
+        val normalizedUid = uid.trim()
+        val normalizedCode = code.trim()
+
+        if (normalizedUid.isBlank() || !isValidCode(normalizedCode)) {
+            return null
+        }
+
+        val primaryDoc = primaryCollectedDocument(normalizedUid, normalizedCode).get().await()
+        val legacyDoc = legacyCollectedDocument(normalizedUid, normalizedCode).get().await()
+
+        val primaryItem = if (primaryDoc.exists()) {
+            primaryDoc.toUserAchievement(normalizedCode)
+        } else {
+            null
+        }
+
+        val legacyItem = if (legacyDoc.exists()) {
+            legacyDoc.toUserAchievement(normalizedCode)
+        } else {
+            null
+        }
+
+        val merged = choosePreferred(primaryItem, legacyItem)
+        return merged?.let { fillMissingCollectedFields(it) }
     }
 
     suspend fun getCollectedCount(uid: String): Int {
@@ -130,9 +160,61 @@ class AchievementRepository(
         return getAllCatalogItems().size
     }
 
-    private fun com.google.firebase.firestore.DocumentSnapshot.toCatalogItem(
-        defaultCode: String
-    ): AchievementCatalogItem {
+    private suspend fun fillMissingCollectedFields(item: UserAchievement): UserAchievement {
+        if (
+            item.imageName.isNotBlank() &&
+            item.foundTitle.isNotBlank() &&
+            item.foundDescription.isNotBlank()
+        ) {
+            return item
+        }
+
+        val catalogItem = getCatalogByCode(item.code) ?: return item
+
+        return item.copy(
+            imageName = item.imageName.ifBlank { catalogItem.imageName },
+            foundTitle = item.foundTitle.ifBlank { catalogItem.foundTitle },
+            foundDescription = item.foundDescription.ifBlank { catalogItem.foundDescription }
+        )
+    }
+
+    private fun choosePreferredAgainstCandidate(
+        current: UserAchievement?,
+        candidate: UserAchievement
+    ): UserAchievement {
+        if (current == null) {
+            return candidate
+        }
+
+        val currentTime = current.collectedAt?.toDate()?.time ?: Long.MIN_VALUE
+        val candidateTime = candidate.collectedAt?.toDate()?.time ?: Long.MIN_VALUE
+
+        return when {
+            candidateTime > currentTime -> candidate
+            candidateTime < currentTime -> current
+            fieldScore(candidate) > fieldScore(current) -> candidate
+            else -> current
+        }
+    }
+
+    private fun choosePreferred(primary: UserAchievement?, legacy: UserAchievement?): UserAchievement? {
+        return when {
+            primary == null && legacy == null -> null
+            primary == null -> legacy
+            legacy == null -> primary
+            else -> choosePreferredAgainstCandidate(primary, legacy)
+        }
+    }
+
+    private fun fieldScore(item: UserAchievement): Int {
+        var score = 0
+        if (item.imageName.isNotBlank()) score++
+        if (item.foundTitle.isNotBlank()) score++
+        if (item.foundDescription.isNotBlank()) score++
+        return score
+    }
+
+    private fun DocumentSnapshot.toCatalogItem(defaultCode: String): AchievementCatalogItem {
         return AchievementCatalogItem(
             code = getString(FIELD_CODE).orEmpty().ifBlank { defaultCode },
             imageName = getString(FIELD_IMAGE_NAME).orEmpty(),
@@ -143,10 +225,36 @@ class AchievementRepository(
         )
     }
 
+    private fun DocumentSnapshot.toUserAchievement(defaultCode: String): UserAchievement {
+        return UserAchievement(
+            code = getString(FIELD_CODE).orEmpty().ifBlank { defaultCode },
+            imageName = getString(FIELD_IMAGE_NAME).orEmpty(),
+            foundTitle = getString(FIELD_FOUND_TITLE).orEmpty(),
+            foundDescription = getString(FIELD_FOUND_DESCRIPTION).orEmpty(),
+            collectedAt = getTimestamp(FIELD_COLLECTED_AT)
+        )
+    }
+
+    private fun primaryCollectedDocument(uid: String, code: String) = firestore
+        .collection(PRIMARY_USERS_COLLECTION)
+        .document(uid)
+        .collection(PRIMARY_COLLECTED_COLLECTION)
+        .document(code)
+
+    private fun legacyCollectedDocument(uid: String, code: String) = firestore
+        .collection(LEGACY_USERS_COLLECTION)
+        .document(uid)
+        .collection(LEGACY_COLLECTED_COLLECTION)
+        .document(code)
+
     companion object {
         private const val ACHIEVEMENTS_COLLECTION = "achievements"
-        private const val USERS_COLLECTION = "users"
-        private const val COLLECTED_COLLECTION = "collectedAchievements"
+
+        private const val PRIMARY_USERS_COLLECTION = "user"
+        private const val PRIMARY_COLLECTED_COLLECTION = "collected"
+
+        private const val LEGACY_USERS_COLLECTION = "users"
+        private const val LEGACY_COLLECTED_COLLECTION = "collectedAchievements"
 
         private const val FIELD_CODE = "code"
         private const val FIELD_COLLECTED_AT = "collectedAt"

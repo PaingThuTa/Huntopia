@@ -7,14 +7,19 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import kotlinx.coroutines.launch
 
 class SignUpActivity : AppCompatActivity() {
 
+    private val userRepository = UserRepository()
+
     private lateinit var auth: FirebaseAuth
+    private lateinit var usernameInput: EditText
     private lateinit var emailInput: EditText
     private lateinit var passwordInput: EditText
     private lateinit var confirmPasswordInput: EditText
@@ -27,6 +32,7 @@ class SignUpActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        usernameInput = findViewById(R.id.usernameInput)
         emailInput = findViewById(R.id.emailInput)
         passwordInput = findViewById(R.id.passwordInput)
         confirmPasswordInput = findViewById(R.id.confirmPasswordInput)
@@ -43,9 +49,16 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     private fun attemptSignUp() {
+        val username = usernameInput.text.toString().trim()
         val email = emailInput.text.toString().trim()
         val password = passwordInput.text.toString().trim()
         val confirmPassword = confirmPasswordInput.text.toString().trim()
+
+        if (username.isEmpty()) {
+            usernameInput.error = getString(R.string.error_username_required)
+            usernameInput.requestFocus()
+            return
+        }
 
         if (email.isEmpty()) {
             emailInput.error = getString(R.string.error_email_required)
@@ -86,8 +99,37 @@ class SignUpActivity : AppCompatActivity() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, getString(R.string.signup_success), Toast.LENGTH_SHORT).show()
-                    navigateToMain()
+                    val firebaseUser = task.result?.user ?: auth.currentUser
+                    if (firebaseUser == null) {
+                        Toast.makeText(this, getString(R.string.error_signup_generic), Toast.LENGTH_LONG)
+                            .show()
+                        return@addOnCompleteListener
+                    }
+
+                    lifecycleScope.launch {
+                        val profileSynced = runCatching {
+                            userRepository.createOrUpdateProfile(
+                                uid = firebaseUser.uid,
+                                username = username,
+                                email = email
+                            )
+                        }.isSuccess
+
+                        if (!profileSynced) {
+                            Toast.makeText(
+                                this@SignUpActivity,
+                                getString(R.string.warning_profile_sync_failed),
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+
+                        Toast.makeText(
+                            this@SignUpActivity,
+                            getString(R.string.signup_success),
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        navigateToMain()
+                    }
                 } else {
                     val message = when (task.exception) {
                         is FirebaseAuthWeakPasswordException -> getString(R.string.error_password_too_short)

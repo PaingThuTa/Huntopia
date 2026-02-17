@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,15 +21,13 @@ import kotlinx.coroutines.launch
 
 class ProfileFragment : Fragment() {
 
-    private val repository = AchievementRepository()
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var emailTextView: TextView
+    private val achievementRepository = AchievementRepository()
+    private val userRepository = UserRepository()
 
-    private val fallbackItems = listOf(
-        RecentAchievement("Sala Thai", "30/1/2026"),
-        RecentAchievement("Albert Einstine Statue", "12/1/2026"),
-        RecentAchievement("Angel", "29/12/2025")
-    )
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var nameTextView: TextView
+    private lateinit var emailTextView: TextView
+    private lateinit var recentTitleView: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,7 +41,9 @@ class ProfileFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView = view.findViewById(R.id.rvRecent)
+        nameTextView = view.findViewById(R.id.tvName)
         emailTextView = view.findViewById(R.id.tvEmail)
+        recentTitleView = view.findViewById(R.id.tvRecent)
         val logoutButton: MaterialButton = view.findViewById(R.id.btnLogout)
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -53,63 +54,70 @@ class ProfileFragment : Fragment() {
             )
         )
 
-        showFallbackData()
-        updateProfileIdentity()
+        showEmptyProfileState()
         setupLogoutButton(logoutButton)
         setupBottomNav(view)
     }
 
     override fun onResume() {
         super.onResume()
-        updateProfileIdentity()
-        loadRecentAchievements()
+        loadProfileData()
     }
 
-    private fun loadRecentAchievements() {
+    private fun loadProfileData() {
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
-            showFallbackData()
+            showEmptyProfileState()
             return
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val recent = repository.getCollectedAchievements(user.uid)
+                val profile = userRepository.getOrProvisionProfile(user.uid, user.email.orEmpty())
+                nameTextView.text = profile.username
+                emailTextView.text = profile.email.ifBlank { getString(R.string.profile_email_placeholder) }
+
+                val recent = achievementRepository.getCollectedAchievements(user.uid)
                     .take(3)
                     .map {
                         RecentAchievement(
+                            code = it.code,
                             title = it.foundTitle.ifBlank { it.code },
                             dateLabel = formatDate(it.collectedAt?.toDate())
                         )
                     }
 
+                recentTitleView.text = if (recent.isEmpty()) {
+                    getString(R.string.no_achievements_yet)
+                } else {
+                    getString(R.string.recently_obtained)
+                }
+
                 recyclerView.adapter = RecentAchievementAdapter(recent) { item ->
                     parentFragmentManager.beginTransaction()
                         .replace(
                             R.id.fragment_container,
-                            AchievementDetailsFragment.newInstance(item.title, true)
+                            AchievementDetailsFragment.newInstance(code = item.code, achieved = true)
                         )
                         .addToBackStack(null)
                         .commit()
                 }
             } catch (_: Exception) {
-                showFallbackData()
+                showProfileLoadError()
             }
         }
     }
 
-    private fun showFallbackData() {
-        recyclerView.adapter = RecentAchievementAdapter(fallbackItems) { item ->
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AchievementDetailsFragment.newInstance(item.title, true))
-                .addToBackStack(null)
-                .commit()
-        }
+    private fun showEmptyProfileState() {
+        nameTextView.text = getString(R.string.profile_username_placeholder)
+        emailTextView.text = getString(R.string.profile_email_placeholder)
+        recentTitleView.text = getString(R.string.no_achievements_yet)
+        recyclerView.adapter = RecentAchievementAdapter(emptyList()) { _ -> }
     }
 
-    private fun updateProfileIdentity() {
-        val email = FirebaseAuth.getInstance().currentUser?.email
-        emailTextView.text = email ?: getString(R.string.profile_email_placeholder)
+    private fun showProfileLoadError() {
+        showEmptyProfileState()
+        Toast.makeText(requireContext(), getString(R.string.error_load_profile), Toast.LENGTH_SHORT).show()
     }
 
     private fun setupLogoutButton(logoutButton: MaterialButton) {
@@ -169,7 +177,7 @@ class ProfileFragment : Fragment() {
 
     private fun formatDate(date: Date?): String {
         if (date == null) {
-            return "N/A"
+            return getString(R.string.unknown_date)
         }
         return SimpleDateFormat("d/M/yyyy", Locale.US).format(date)
     }

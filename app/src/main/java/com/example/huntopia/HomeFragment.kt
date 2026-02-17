@@ -18,23 +18,23 @@ import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
-    private val repository = AchievementRepository()
+    private val achievementRepository = AchievementRepository()
+    private val userRepository = UserRepository()
 
     private lateinit var progressIndicator: CircularProgressIndicator
     private lateinit var progressText: TextView
+    private lateinit var nameText: TextView
+    private lateinit var recentlyTitle: TextView
     private lateinit var recyclerView: RecyclerView
-
-    private val fallbackRecentItems = listOf(
-        RecentAchievement("Sala Thai", "30/1/2026"),
-        RecentAchievement("Albert Einstine Statue", "12/1/2026"),
-        RecentAchievement("Angel", "29/12/2025")
-    )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         progressIndicator = view.findViewById(R.id.progress_indicator)
         progressText = view.findViewById(R.id.progress_text)
+        nameText = view.findViewById(R.id.name_text)
+        recentlyTitle = view.findViewById(R.id.recently_title)
+
         val viewAchievementsButton = view.findViewById<View>(R.id.view_achievements_button)
         recyclerView = view.findViewById(R.id.recently_list)
         val scanFab: View = view.findViewById(R.id.scan_fab)
@@ -50,7 +50,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             VerticalSpaceItemDecoration(resources.getDimensionPixelSize(R.dimen.recent_list_item_spacing))
         )
 
-        showFallbackData()
+        showEmptyHomeState()
 
         ivProfile.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -58,7 +58,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 .commit()
         }
         ivHome.setOnClickListener {
-            Toast.makeText(requireContext(), "Home", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), getString(R.string.home_tab), Toast.LENGTH_SHORT).show()
         }
         ivStar.setOnClickListener {
             parentFragmentManager.beginTransaction()
@@ -98,17 +98,21 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun loadHomeData() {
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
-            showFallbackData()
+            showEmptyHomeState()
             return
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val collected = repository.getCollectedAchievements(user.uid)
-                val catalogCount = repository.getCatalogCount()
+                val profile = userRepository.getOrProvisionProfile(user.uid, user.email.orEmpty())
+                nameText.text = profile.username
+
+                val collected = achievementRepository.getCollectedAchievements(user.uid)
+                val catalogCount = achievementRepository.getCatalogCount()
 
                 val recent = collected.take(3).map {
                     RecentAchievement(
+                        code = it.code,
                         title = it.foundTitle.ifBlank { it.code },
                         dateLabel = formatDate(it.collectedAt?.toDate())
                     )
@@ -118,38 +122,44 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 progressIndicator.setProgressCompat(collected.size.coerceAtMost(progressIndicator.max), true)
                 progressText.text = "${collected.size}/$catalogCount"
 
+                recentlyTitle.text = if (recent.isEmpty()) {
+                    getString(R.string.no_achievements_yet)
+                } else {
+                    getString(R.string.recently_obtained)
+                }
+
                 recyclerView.adapter = RecentAchievementAdapter(recent) { item ->
                     parentFragmentManager.beginTransaction()
                         .replace(
                             R.id.fragment_container,
-                            AchievementDetailsFragment.newInstance(item.title, true)
+                            AchievementDetailsFragment.newInstance(code = item.code, achieved = true)
                         )
                         .addToBackStack(null)
                         .commit()
                 }
             } catch (_: Exception) {
-                showFallbackData()
+                showHomeLoadError()
             }
         }
     }
 
-    private fun showFallbackData() {
-        val progressValue = 25
-        val progressMax = 100
-        progressIndicator.max = progressMax
-        progressIndicator.setProgressCompat(progressValue, true)
-        progressText.text = "$progressValue/$progressMax"
-        recyclerView.adapter = RecentAchievementAdapter(fallbackRecentItems) { item ->
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, AchievementDetailsFragment.newInstance(item.title, true))
-                .addToBackStack(null)
-                .commit()
-        }
+    private fun showEmptyHomeState() {
+        nameText.text = getString(R.string.profile_username_placeholder)
+        progressIndicator.max = 1
+        progressIndicator.setProgressCompat(0, false)
+        progressText.text = "0/0"
+        recentlyTitle.text = getString(R.string.no_achievements_yet)
+        recyclerView.adapter = RecentAchievementAdapter(emptyList()) { _ -> }
+    }
+
+    private fun showHomeLoadError() {
+        showEmptyHomeState()
+        Toast.makeText(requireContext(), getString(R.string.error_load_achievements), Toast.LENGTH_SHORT).show()
     }
 
     private fun formatDate(date: Date?): String {
         if (date == null) {
-            return "N/A"
+            return getString(R.string.unknown_date)
         }
         val formatter = SimpleDateFormat("d/M/yyyy", Locale.US)
         return formatter.format(date)

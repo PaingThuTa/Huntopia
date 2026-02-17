@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,7 +37,7 @@ class AchievementsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.addItemDecoration(SpacingItemDecoration(dpToPx(18)))
 
-        showFallbackItems()
+        showEmptyAchievements()
         setupBottomNav(view)
     }
 
@@ -48,7 +49,7 @@ class AchievementsFragment : Fragment() {
     private fun loadAchievements() {
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
-            showFallbackItems()
+            showEmptyAchievements()
             return
         }
 
@@ -57,6 +58,7 @@ class AchievementsFragment : Fragment() {
                 val collected = repository.getCollectedAchievements(user.uid)
                 val items = collected.map {
                     AchievementItem(
+                        code = it.code,
                         title = it.foundTitle.ifBlank { it.code },
                         achievedDate = formatDate(it.collectedAt?.toDate()),
                         achievedTime = formatTime(it.collectedAt?.toDate()),
@@ -68,40 +70,32 @@ class AchievementsFragment : Fragment() {
                     parentFragmentManager.beginTransaction()
                         .replace(
                             R.id.fragment_container,
-                            AchievementDetailsFragment.newInstance(item.title, true, item.imageName)
+                            AchievementDetailsFragment.newInstance(code = item.code, achieved = true)
                         )
                         .addToBackStack(null)
                         .commit()
                 }
+
+                if (items.isEmpty()) {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.no_achievements_yet),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             } catch (_: Exception) {
-                showFallbackItems()
+                showEmptyAchievements()
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.error_load_achievements),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
     }
 
-    private fun showFallbackItems() {
-        val items = buildDummyItems()
-        recyclerView.adapter = AchievementsAdapter(items) { item ->
-            parentFragmentManager.beginTransaction()
-                .replace(
-                    R.id.fragment_container,
-                    AchievementDetailsFragment.newInstance(item.title, true, item.imageName)
-                )
-                .addToBackStack(null)
-                .commit()
-        }
-    }
-
-    private fun buildDummyItems(): List<AchievementItem> {
-        val date = "30/1/2026"
-        val time = "10:00 AM"
-        return listOf(
-            AchievementItem("⏰ Clock Tower", date, time, "clocktower"),
-            AchievementItem("🏢 AU Mall & Cafeteria", date, time, "aumall"),
-            AchievementItem("🛠️ VMES", date, time, "vmes"),
-            AchievementItem("🏯 Sala Thai", date, time, "salathai"),
-            AchievementItem("👼🏻 Angel Statue", date, time, "angelstatue")
-        )
+    private fun showEmptyAchievements() {
+        recyclerView.adapter = AchievementsAdapter(emptyList()) { _ -> }
     }
 
     private fun setupBottomNav(root: View) {
@@ -148,14 +142,14 @@ class AchievementsFragment : Fragment() {
 
     private fun formatDate(date: Date?): String {
         if (date == null) {
-            return "N/A"
+            return getString(R.string.unknown_date)
         }
         return SimpleDateFormat("d/M/yyyy", Locale.US).format(date)
     }
 
     private fun formatTime(date: Date?): String {
         if (date == null) {
-            return "N/A"
+            return getString(R.string.unknown_time)
         }
         return SimpleDateFormat("h:mm a", Locale.US).format(date)
     }

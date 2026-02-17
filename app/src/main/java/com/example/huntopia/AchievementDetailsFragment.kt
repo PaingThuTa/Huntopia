@@ -7,9 +7,16 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.FirebaseAuth
+import java.text.SimpleDateFormat
+import java.util.Date
 import java.util.Locale
+import kotlinx.coroutines.launch
 
 class AchievementDetailsFragment : Fragment() {
+
+    private val repository = AchievementRepository()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,9 +29,8 @@ class AchievementDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val title = requireArguments().getString(ARG_TITLE, "Achievement")
+        val code = requireArguments().getString(ARG_CODE).orEmpty()
         val isAchieved = requireArguments().getBoolean(ARG_ACHIEVED, true)
-        val imageName = requireArguments().getString(ARG_IMAGE_NAME)
 
         val ivAchievement = view.findViewById<ImageView>(R.id.ivAchievement)
         val tvTitle = view.findViewById<TextView>(R.id.tvTitle)
@@ -32,82 +38,107 @@ class AchievementDetailsFragment : Fragment() {
         val tvDate = view.findViewById<TextView>(R.id.tvDate)
         val btnBack = view.findViewById<View>(R.id.btnBack)
 
-        val resolvedImageName = if (!imageName.isNullOrBlank()) {
-            imageName
-        } else {
-            resolveImageNameFromTitle(title)
-        }
-        val resId = if (resolvedImageName.isBlank()) {
-            0
-        } else {
-            resources.getIdentifier(resolvedImageName, "drawable", requireContext().packageName)
-        }
-        ivAchievement.setImageResource(if (resId != 0) resId else R.drawable.salathai)
-
-        tvTitle.text = title
-        tvDescription.text = if (isAchieved) {
-            "This place has been achieved. More details can be added later."
-        } else {
-            "This achievement is still locked. Find the hint to unlock it."
-        }
-        tvDate.text = if (isAchieved) {
-            "30 Jan, 2026"
-        } else {
-            "Not achieved yet"
-        }
-
         btnBack.setOnClickListener {
             parentFragmentManager.popBackStack()
         }
-    }
 
-    companion object {
-        private const val ARG_TITLE = "arg_title"
-        private const val ARG_ACHIEVED = "arg_achieved"
-        private const val ARG_IMAGE_NAME = "arg_image_name"
+        if (!AchievementRepository.isValidCode(code)) {
+            tvTitle.text = getString(R.string.achievement_not_found)
+            tvDescription.text = getString(R.string.error_load_achievements)
+            tvDate.text = getString(R.string.unknown_date)
+            ivAchievement.setImageResource(if (isAchieved) R.drawable.ic_nav_star else R.drawable.ic_nav_help)
+            return
+        }
 
-        fun newInstance(
-            title: String,
-            achieved: Boolean,
-            imageName: String? = null
-        ): AchievementDetailsFragment {
-            val fragment = AchievementDetailsFragment()
-            fragment.arguments = Bundle().apply {
-                putString(ARG_TITLE, title)
-                putBoolean(ARG_ACHIEVED, achieved)
-                putString(ARG_IMAGE_NAME, imageName)
+        tvTitle.text = getString(R.string.loading)
+        tvDescription.text = getString(R.string.loading)
+        tvDate.text = getString(R.string.loading)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                val catalog = repository.getCatalogByCode(code)
+                if (catalog == null) {
+                    tvTitle.text = getString(R.string.achievement_not_found)
+                    tvDescription.text = getString(R.string.error_load_achievements)
+                    tvDate.text = if (isAchieved) {
+                        getString(R.string.achievement_date_unknown)
+                    } else {
+                        getString(R.string.not_achieved_yet)
+                    }
+                    ivAchievement.setImageResource(
+                        if (isAchieved) R.drawable.ic_nav_star else R.drawable.ic_nav_help
+                    )
+                    return@launch
+                }
+
+                val resolvedTitle = if (isAchieved) {
+                    catalog.foundTitle.ifBlank {
+                        catalog.unfoundTitle.ifBlank { "Code ${catalog.code}" }
+                    }
+                } else {
+                    catalog.unfoundTitle.ifBlank {
+                        catalog.foundTitle.ifBlank { "Code ${catalog.code}" }
+                    }
+                }
+
+                val resolvedDescription = if (isAchieved) {
+                    catalog.foundDescription.ifBlank { getString(R.string.achievement_desc_unavailable) }
+                } else {
+                    catalog.unfoundDescription.ifBlank { getString(R.string.achievement_locked_hint_default) }
+                }
+
+                val imageResId = resources.getIdentifier(
+                    catalog.imageName,
+                    "drawable",
+                    requireContext().packageName
+                )
+                ivAchievement.setImageResource(
+                    if (imageResId != 0) imageResId else if (isAchieved) R.drawable.ic_nav_star else R.drawable.ic_nav_help
+                )
+
+                tvTitle.text = resolvedTitle
+                tvDescription.text = resolvedDescription
+
+                tvDate.text = if (isAchieved) {
+                    val uid = FirebaseAuth.getInstance().currentUser?.uid.orEmpty()
+                    val collected = if (uid.isBlank()) {
+                        null
+                    } else {
+                        repository.getCollectedAchievementByCode(uid, code)
+                    }
+                    collected?.collectedAt?.toDate()?.let { formatDateTime(it) }
+                        ?: getString(R.string.achievement_date_unknown)
+                } else {
+                    getString(R.string.not_achieved_yet)
+                }
+            } catch (_: Exception) {
+                tvTitle.text = getString(R.string.achievement_not_found)
+                tvDescription.text = getString(R.string.error_load_achievements)
+                tvDate.text = if (isAchieved) {
+                    getString(R.string.achievement_date_unknown)
+                } else {
+                    getString(R.string.not_achieved_yet)
+                }
+                ivAchievement.setImageResource(if (isAchieved) R.drawable.ic_nav_star else R.drawable.ic_nav_help)
             }
-            return fragment
         }
     }
 
-    private fun resolveImageNameFromTitle(title: String): String {
-        val normalized = title.lowercase(Locale.US)
-        return when {
-            "sala thai" in normalized -> "salathai"
-            "clock tower" in normalized -> "clocktower"
-            "angel" in normalized -> "angelstatue"
-            "mall" in normalized || "cafeteria" in normalized -> "aumall"
-            "vmes" in normalized -> "vmes"
-            "sports" in normalized || "john paul" in normalized -> "jp2sport"
-            "crystal" in normalized -> "crystal"
-            "it" in normalized -> "itbuilding"
-            "swim" in normalized || "pool" in normalized -> "indoorswim"
-            "church" in normalized || "chapel" in normalized -> "church"
-            "communication arts" in normalized || normalized == "ca" -> "cabuilding"
-            "coach" in normalized || "terminal" in normalized -> "coachterminal"
-            "architecture" in normalized || normalized == "ar" -> "arbuilding"
-            "conference" in normalized -> "conferencecenter"
-            "aquatic" in normalized -> "aquaticcenter"
-            "msm" in normalized -> "msm"
-            "mse" in normalized || "economics" in normalized -> "mse"
-            "medicine" in normalized || "aumd" in normalized -> "medschool"
-            "tennis" in normalized -> "tennis"
-            "tram" in normalized -> "randomtram"
-            normalized == "cl" || "cathedral of learning" in normalized -> "clbuilding"
-            "hidden haven" in normalized || "secret spot" in normalized || "hidden" in normalized -> "hiddenhaven"
-            "five horses" in normalized || "horses" in normalized -> "fivehorses"
-            else -> ""
+    private fun formatDateTime(date: Date): String {
+        return SimpleDateFormat("d MMM yyyy, h:mm a", Locale.US).format(date)
+    }
+
+    companion object {
+        private const val ARG_CODE = "arg_code"
+        private const val ARG_ACHIEVED = "arg_achieved"
+
+        fun newInstance(code: String, achieved: Boolean): AchievementDetailsFragment {
+            val fragment = AchievementDetailsFragment()
+            fragment.arguments = Bundle().apply {
+                putString(ARG_CODE, code)
+                putBoolean(ARG_ACHIEVED, achieved)
+            }
+            return fragment
         }
     }
 }
