@@ -1,5 +1,6 @@
 package com.example.huntopia
 
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
@@ -45,7 +46,7 @@ class UserRepository(
         val primaryDocRef = firestore.collection(PRIMARY_USERS_COLLECTION).document(normalizedUid)
         val primaryDoc = primaryDocRef.get().await()
 
-        var resolvedUsername = primaryDoc.getString(FIELD_USERNAME).orEmpty().trim()
+        var resolvedUsername = primaryDoc.readCandidateUsername()
         var resolvedEmail = primaryDoc.getString(FIELD_EMAIL).orEmpty().trim()
 
         if (resolvedUsername.isBlank() || resolvedEmail.isBlank()) {
@@ -55,7 +56,7 @@ class UserRepository(
                 .await()
 
             if (resolvedUsername.isBlank()) {
-                resolvedUsername = legacyDoc.getString(FIELD_USERNAME).orEmpty().trim()
+                resolvedUsername = legacyDoc.readCandidateUsername()
             }
             if (resolvedEmail.isBlank()) {
                 resolvedEmail = legacyDoc.getString(FIELD_EMAIL).orEmpty().trim()
@@ -102,6 +103,12 @@ class UserRepository(
         return fallbackUsername(email)
     }
 
+    private fun DocumentSnapshot.readCandidateUsername(): String {
+        return getString(FIELD_USERNAME).orEmpty().trim()
+            .ifBlank { getString(FIELD_NAME).orEmpty().trim() }
+            .ifBlank { getString(FIELD_DISPLAY_NAME).orEmpty().trim() }
+    }
+
     private fun fallbackUsername(email: String): String {
         val prefix = email.substringBefore("@").trim()
         return if (prefix.isNotBlank()) {
@@ -116,6 +123,8 @@ class UserRepository(
         private const val LEGACY_USERS_COLLECTION = "users"
 
         private const val FIELD_USERNAME = "username"
+        private const val FIELD_NAME = "name"
+        private const val FIELD_DISPLAY_NAME = "displayName"
         private const val FIELD_EMAIL = "email"
         private const val FIELD_CREATED_AT = "createdAt"
 

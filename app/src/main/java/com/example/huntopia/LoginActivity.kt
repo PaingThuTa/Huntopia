@@ -7,12 +7,17 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseUser
+import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
+
+    private val userRepository = UserRepository()
 
     private lateinit var auth: FirebaseAuth
     private lateinit var emailInput: EditText
@@ -63,8 +68,9 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        if (auth.currentUser != null) {
-            navigateToMain()
+        val existingUser = auth.currentUser
+        if (existingUser != null) {
+            provisionProfileAndNavigate(existingUser, showSuccessToast = false)
         }
     }
 
@@ -72,8 +78,12 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    Toast.makeText(this, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
-                    navigateToMain()
+                    val firebaseUser = task.result?.user ?: auth.currentUser
+                    if (firebaseUser == null) {
+                        Toast.makeText(this, getString(R.string.error_login_generic), Toast.LENGTH_LONG).show()
+                        return@addOnCompleteListener
+                    }
+                    provisionProfileAndNavigate(firebaseUser, showSuccessToast = true)
                 } else {
                     val message = when (task.exception) {
                         is FirebaseAuthInvalidCredentialsException -> getString(R.string.error_wrong_password)
@@ -83,6 +93,28 @@ class LoginActivity : AppCompatActivity() {
                     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
                 }
             }
+    }
+
+    private fun provisionProfileAndNavigate(user: FirebaseUser, showSuccessToast: Boolean) {
+        lifecycleScope.launch {
+            val profileSynced = runCatching {
+                userRepository.getOrProvisionProfile(user.uid, user.email.orEmpty())
+            }.isSuccess
+
+            if (!profileSynced) {
+                Toast.makeText(
+                    this@LoginActivity,
+                    getString(R.string.warning_profile_sync_failed),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+
+            if (showSuccessToast) {
+                Toast.makeText(this@LoginActivity, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
+            }
+
+            navigateToMain()
+        }
     }
 
     private fun navigateToMain() {

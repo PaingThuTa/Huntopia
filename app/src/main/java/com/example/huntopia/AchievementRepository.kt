@@ -82,21 +82,34 @@ class AchievementRepository(
             return emptyList()
         }
 
-        val primaryQuery = firestore.collection(PRIMARY_USERS_COLLECTION)
-            .document(normalizedUid)
-            .collection(PRIMARY_COLLECTED_COLLECTION)
-            .get()
-            .await()
+        val primaryResult = runCatching {
+            firestore.collection(PRIMARY_USERS_COLLECTION)
+                .document(normalizedUid)
+                .collection(PRIMARY_COLLECTED_COLLECTION)
+                .get()
+                .await()
+        }
 
-        val legacyQuery = firestore.collection(LEGACY_USERS_COLLECTION)
-            .document(normalizedUid)
-            .collection(LEGACY_COLLECTED_COLLECTION)
-            .get()
-            .await()
+        val legacyResult = runCatching {
+            firestore.collection(LEGACY_USERS_COLLECTION)
+                .document(normalizedUid)
+                .collection(LEGACY_COLLECTED_COLLECTION)
+                .get()
+                .await()
+        }
+
+        if (primaryResult.isFailure && legacyResult.isFailure) {
+            throw primaryResult.exceptionOrNull()
+                ?: legacyResult.exceptionOrNull()
+                ?: IllegalStateException("Unable to load collected achievements")
+        }
+
+        val primaryDocs = primaryResult.getOrNull()?.documents.orEmpty()
+        val legacyDocs = legacyResult.getOrNull()?.documents.orEmpty()
 
         val mergedByCode = LinkedHashMap<String, UserAchievement>()
 
-        (primaryQuery.documents + legacyQuery.documents).forEach { doc ->
+        (primaryDocs + legacyDocs).forEach { doc ->
             val item = doc.toUserAchievement(doc.id)
             val key = item.code.ifBlank { doc.id }
             val current = mergedByCode[key]
@@ -117,16 +130,29 @@ class AchievementRepository(
             return null
         }
 
-        val primaryDoc = primaryCollectedDocument(normalizedUid, normalizedCode).get().await()
-        val legacyDoc = legacyCollectedDocument(normalizedUid, normalizedCode).get().await()
+        val primaryResult = runCatching {
+            primaryCollectedDocument(normalizedUid, normalizedCode).get().await()
+        }
+        val legacyResult = runCatching {
+            legacyCollectedDocument(normalizedUid, normalizedCode).get().await()
+        }
 
-        val primaryItem = if (primaryDoc.exists()) {
+        if (primaryResult.isFailure && legacyResult.isFailure) {
+            throw primaryResult.exceptionOrNull()
+                ?: legacyResult.exceptionOrNull()
+                ?: IllegalStateException("Unable to load collected achievement")
+        }
+
+        val primaryDoc = primaryResult.getOrNull()
+        val legacyDoc = legacyResult.getOrNull()
+
+        val primaryItem = if (primaryDoc?.exists() == true) {
             primaryDoc.toUserAchievement(normalizedCode)
         } else {
             null
         }
 
-        val legacyItem = if (legacyDoc.exists()) {
+        val legacyItem = if (legacyDoc?.exists() == true) {
             legacyDoc.toUserAchievement(normalizedCode)
         } else {
             null

@@ -51,39 +51,8 @@ class AchievementsUnlockFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            try {
-                val catalogItems = repository.getAllCatalogItems()
-                val collectedCodes = repository.getCollectedAchievements(user.uid)
-                    .map { it.code }
-                    .toSet()
-
-                val unlockItems = catalogItems
-                    .filter { it.code !in collectedCodes }
-                    .map {
-                        UnlockAchievementItem(
-                            code = it.code,
-                            title = it.unfoundTitle.ifBlank { "Code ${it.code}" },
-                            imageName = it.imageName
-                        )
-                    }
-
-                recyclerView.adapter = AchievementsUnlockAdapter(unlockItems) { item ->
-                    parentFragmentManager.beginTransaction()
-                        .replace(
-                            R.id.fragment_container,
-                            AchievementDetailsFragment.newInstance(code = item.code, achieved = false)
-                        )
-                        .addToBackStack(null)
-                        .commit()
-                }
-
-                if (unlockItems.isEmpty()) {
-                    Toast.makeText(
-                        requireContext(),
-                        getString(R.string.all_achievements_unlocked),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
+            val catalogItems = try {
+                repository.getAllCatalogItems()
             } catch (_: Exception) {
                 showEmptyUnlockItems()
                 Toast.makeText(
@@ -91,7 +60,54 @@ class AchievementsUnlockFragment : Fragment() {
                     getString(R.string.error_load_achievements),
                     Toast.LENGTH_SHORT
                 ).show()
+                return@launch
             }
+
+            val (collectedCodes, isCollectedReliable) = loadCollectedCodes(user.uid)
+
+            val unlockItems = catalogItems
+                .filter { it.code !in collectedCodes }
+                .map {
+                    UnlockAchievementItem(
+                        code = it.code,
+                        title = it.unfoundTitle.ifBlank { "Code ${it.code}" },
+                        imageName = it.imageName
+                    )
+                }
+
+            recyclerView.adapter = AchievementsUnlockAdapter(unlockItems) { item ->
+                parentFragmentManager.beginTransaction()
+                    .replace(
+                        R.id.fragment_container,
+                        AchievementDetailsFragment.newInstance(code = item.code, achieved = false)
+                    )
+                    .addToBackStack(null)
+                    .commit()
+            }
+
+            if (!isCollectedReliable) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.warning_showing_all_locked_due_sync_issue),
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else if (unlockItems.isEmpty()) {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.all_achievements_unlocked),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    private suspend fun loadCollectedCodes(uid: String): Pair<Set<String>, Boolean> {
+        return try {
+            repository.getCollectedAchievements(uid)
+                .map { it.code }
+                .toSet() to true
+        } catch (_: Exception) {
+            emptySet<String>() to false
         }
     }
 

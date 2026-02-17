@@ -72,11 +72,17 @@ class ProfileFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            try {
+            val profileLoaded = try {
                 val profile = userRepository.getOrProvisionProfile(user.uid, user.email.orEmpty())
                 nameTextView.text = profile.username
                 emailTextView.text = profile.email.ifBlank { getString(R.string.profile_email_placeholder) }
+                true
+            } catch (_: Exception) {
+                Toast.makeText(requireContext(), getString(R.string.error_load_profile), Toast.LENGTH_SHORT).show()
+                false
+            }
 
+            try {
                 val recent = achievementRepository.getCollectedAchievements(user.uid)
                     .take(3)
                     .map {
@@ -100,10 +106,10 @@ class ProfileFragment : Fragment() {
                             AchievementDetailsFragment.newInstance(code = item.code, achieved = true)
                         )
                         .addToBackStack(null)
-                        .commit()
-                }
+                            .commit()
+                    }
             } catch (_: Exception) {
-                showProfileLoadError()
+                showRecentAchievementsLoadError(profileLoaded)
             }
         }
     }
@@ -111,13 +117,21 @@ class ProfileFragment : Fragment() {
     private fun showEmptyProfileState() {
         nameTextView.text = getString(R.string.profile_username_placeholder)
         emailTextView.text = getString(R.string.profile_email_placeholder)
+        showEmptyRecentAchievementsState()
+    }
+
+    private fun showEmptyRecentAchievementsState() {
         recentTitleView.text = getString(R.string.no_achievements_yet)
         recyclerView.adapter = RecentAchievementAdapter(emptyList()) { _ -> }
     }
 
-    private fun showProfileLoadError() {
-        showEmptyProfileState()
-        Toast.makeText(requireContext(), getString(R.string.error_load_profile), Toast.LENGTH_SHORT).show()
+    private fun showRecentAchievementsLoadError(profileLoaded: Boolean) {
+        if (!profileLoaded) {
+            nameTextView.text = getString(R.string.profile_username_placeholder)
+            emailTextView.text = getString(R.string.profile_email_placeholder)
+        }
+        showEmptyRecentAchievementsState()
+        Toast.makeText(requireContext(), getString(R.string.error_load_achievements), Toast.LENGTH_SHORT).show()
     }
 
     private fun setupLogoutButton(logoutButton: MaterialButton) {

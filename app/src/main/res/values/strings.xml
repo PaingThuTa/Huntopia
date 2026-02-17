@@ -31,6 +31,7 @@
     <string name="error_signup_generic">Couldn\'t create account. Please try again.</string>
     <string name="error_load_achievements">Unable to load achievements right now.</string>
     <string name="error_load_profile">Unable to load profile right now.</string>
+    <string name="warning_showing_all_locked_due_sync_issue">Couldn\'t load your collected achievements. Showing all as locked.</string>
 
     <string name="login_success">Login successful</string>
     <string name="signup_success">Account created successfully</string>

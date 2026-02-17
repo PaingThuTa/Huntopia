@@ -103,48 +103,31 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            try {
+            val profileLoaded = try {
                 val profile = userRepository.getOrProvisionProfile(user.uid, user.email.orEmpty())
                 nameText.text = profile.username
+                true
+            } catch (_: Exception) {
+                Toast.makeText(requireContext(), getString(R.string.error_load_profile), Toast.LENGTH_SHORT).show()
+                false
+            }
 
+            try {
                 val collected = achievementRepository.getCollectedAchievements(user.uid)
                 val catalogCount = achievementRepository.getCatalogCount()
-
-                val recent = collected.take(3).map {
-                    RecentAchievement(
-                        code = it.code,
-                        title = it.foundTitle.ifBlank { it.code },
-                        dateLabel = formatDate(it.collectedAt?.toDate())
-                    )
-                }
-
-                progressIndicator.max = if (catalogCount > 0) catalogCount else 1
-                progressIndicator.setProgressCompat(collected.size.coerceAtMost(progressIndicator.max), true)
-                progressText.text = "${collected.size}/$catalogCount"
-
-                recentlyTitle.text = if (recent.isEmpty()) {
-                    getString(R.string.no_achievements_yet)
-                } else {
-                    getString(R.string.recently_obtained)
-                }
-
-                recyclerView.adapter = RecentAchievementAdapter(recent) { item ->
-                    parentFragmentManager.beginTransaction()
-                        .replace(
-                            R.id.fragment_container,
-                            AchievementDetailsFragment.newInstance(code = item.code, achieved = true)
-                        )
-                        .addToBackStack(null)
-                        .commit()
-                }
+                showRecentAchievements(collected, catalogCount)
             } catch (_: Exception) {
-                showHomeLoadError()
+                showHomeAchievementsLoadError(profileLoaded)
             }
         }
     }
 
     private fun showEmptyHomeState() {
         nameText.text = getString(R.string.profile_username_placeholder)
+        showEmptyRecentAchievementsState()
+    }
+
+    private fun showEmptyRecentAchievementsState() {
         progressIndicator.max = 1
         progressIndicator.setProgressCompat(0, false)
         progressText.text = "0/0"
@@ -152,8 +135,41 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         recyclerView.adapter = RecentAchievementAdapter(emptyList()) { _ -> }
     }
 
-    private fun showHomeLoadError() {
-        showEmptyHomeState()
+    private fun showRecentAchievements(collected: List<UserAchievement>, catalogCount: Int) {
+        val recent = collected.take(3).map {
+            RecentAchievement(
+                code = it.code,
+                title = it.foundTitle.ifBlank { it.code },
+                dateLabel = formatDate(it.collectedAt?.toDate())
+            )
+        }
+
+        progressIndicator.max = if (catalogCount > 0) catalogCount else 1
+        progressIndicator.setProgressCompat(collected.size.coerceAtMost(progressIndicator.max), true)
+        progressText.text = "${collected.size}/$catalogCount"
+
+        recentlyTitle.text = if (recent.isEmpty()) {
+            getString(R.string.no_achievements_yet)
+        } else {
+            getString(R.string.recently_obtained)
+        }
+
+        recyclerView.adapter = RecentAchievementAdapter(recent) { item ->
+            parentFragmentManager.beginTransaction()
+                .replace(
+                    R.id.fragment_container,
+                    AchievementDetailsFragment.newInstance(code = item.code, achieved = true)
+                )
+                .addToBackStack(null)
+                .commit()
+        }
+    }
+
+    private fun showHomeAchievementsLoadError(profileLoaded: Boolean) {
+        if (!profileLoaded) {
+            nameText.text = getString(R.string.profile_username_placeholder)
+        }
+        showEmptyRecentAchievementsState()
         Toast.makeText(requireContext(), getString(R.string.error_load_achievements), Toast.LENGTH_SHORT).show()
     }
 
